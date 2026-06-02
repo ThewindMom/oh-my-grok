@@ -1,0 +1,20 @@
+{
+  "name": "oh-my-grok",
+  "version": "0.1.0",
+  "description": "Grok hooks: skill gate, Ralph/ultrawork loops, todo + boulder continuation, stop verification (omo-inspired)",
+  "author": {
+    "name": "mihazs"
+  },
+  "homepage": "https://github.com/mihazs/oh-my-grok",
+  "repository": "https://github.com/mihazs/oh-my-grok",
+  "license": "MIT",
+  "keywords": [
+    "grok",
+    "hooks",
+    "skill-gate",
+    "ralph-loop",
+    "ultrawork",
+    "boulder",
+    "todo-continuation"
+  ]
+}
