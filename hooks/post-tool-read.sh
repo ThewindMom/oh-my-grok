@@ -19,15 +19,14 @@ else
   exit 0
 fi
 
-if ! path_is_skill_file "$read_path"; then
-  exit 0
-fi
-
-skill_id="$(skill_id_for_path "$read_path" 2>/dev/null || true)"
-if [ -n "$skill_id" ]; then
-  mark_skill_loaded "$skill_id"
-fi
-
+# Hashline cache for workspace source files (skipped inside update_cache for SKILL.md).
 update_cache_from_read "$read_path" 2>/dev/null || true
+
+if path_is_skill_file "$read_path"; then
+  skill_id="$(skill_id_for_path "$read_path" 2>/dev/null || true)"
+  if [ -n "$skill_id" ]; then
+    mark_skill_loaded "$skill_id"
+  fi
+fi
 
 exit 0

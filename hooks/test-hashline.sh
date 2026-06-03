@@ -58,7 +58,15 @@ export GROK_WORKSPACE_ROOT="$ws"
 trap 'rm -rf "$ws" "$(hashline_cache_dir)"' EXIT
 
 printf 'hello world\n' >"${ws}/foo.ts"
-update_cache_from_read "${ws}/foo.ts"
+
+# Populate cache via post-tool-read (production path), not direct update_cache_from_read
+printf '%s\n' '{"hookEventName":"PostToolUse","sessionId":"'"$GROK_SESSION_ID"'","workspaceRoot":"'"$GROK_WORKSPACE_ROOT"'","toolName":"Read","toolInput":{"path":"'"${ws}/foo.ts"'"}}' \
+  | GROK_HOOK_EVENT=post_tool_use bash "${HOOKS_DIR}/run-hook.sh" post-tool-read.sh >/dev/null
+cache_file="$(hashline_cache_path "${ws}/foo.ts")"
+test -f "$cache_file" || {
+  echo "post-tool-read did not write hashline cache at $cache_file"
+  exit 1
+}
 
 good_hash="$(python3 "$HASHLINE_PY" compute 1 "hello world")"
 good_tag="${good_hash#*#}"
