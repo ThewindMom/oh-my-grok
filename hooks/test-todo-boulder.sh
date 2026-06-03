@@ -84,4 +84,19 @@ printf '%s\n' '{"hookEventName":"PostToolUse","sessionId":"'"$GROK_SESSION_ID"'"
   | GROK_HOOK_EVENT=post_tool_use bash "${HOOKS_DIR}/run-hook.sh" post-tool-todo-write.sh >/dev/null
 test -f "${tmpdir}/.omg/todos/${GROK_SESSION_ID}.json" || { echo "todo mirror missing"; exit 1; }
 
+# Todo cooldown: second stop within 5s should allow (no TODO CONTINUATION)
+printf '%s\n' '{"hookEventName":"stop","sessionId":"'"$GROK_SESSION_ID"'","workspaceRoot":"'"$GROK_WORKSPACE_ROOT"'","stopReason":"end_turn"}' \
+  | GROK_HOOK_EVENT=stop bash "${HOOKS_DIR}/run-hook.sh" stop-hook.sh >"${tmpdir}/todo-block2.json"
+if rg -q 'TODO CONTINUATION' "${tmpdir}/todo-block2.json" 2>/dev/null; then
+  echo "expected no TODO CONTINUATION on cooldown (second stop)"
+  cat "${tmpdir}/todo-block2.json"
+  exit 1
+fi
+
+sleep 6
+
+printf '%s\n' '{"hookEventName":"stop","sessionId":"'"$GROK_SESSION_ID"'","workspaceRoot":"'"$GROK_WORKSPACE_ROOT"'","stopReason":"end_turn"}' \
+  | GROK_HOOK_EVENT=stop bash "${HOOKS_DIR}/run-hook.sh" stop-hook.sh >"${tmpdir}/todo-block3.json"
+rg -q 'TODO CONTINUATION' "${tmpdir}/todo-block3.json" || { cat "${tmpdir}/todo-block3.json"; exit 1; }
+
 echo "todo-boulder hooks: OK"

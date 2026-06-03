@@ -32,8 +32,10 @@ Plugin manifest: **`hooks/hooks.json`** (loaded via `GROK_PLUGIN_ROOT`). **Do no
 
 1. **Ralph / ultrawork** — not affected by `/stop-continuation` (but `/stop-continuation` clears loop state)
 2. **Boulder** — `.omg/plans/*.md` progress
-3. **Todo continuation** — incomplete `TodoWrite` items
+3. **Todo continuation** — incomplete `TodoWrite` items (5s cooldown between fires)
 4. **plan.md** — root/session unchecked boxes (fallback)
+
+Grok fires **`Stop`** (not Claude Code’s `session.idle`). Todo enforcer state lives under `~/.grok/state/todo-enforcer/<session>/state.json`: after a block, another todo continuation cannot fire for **5 seconds** (`CONTINUATION_COOLDOWN_MS`); non-`end_turn` stop reasons set a **3s abort window** where continuation is skipped.
 
 After `/stop-continuation`, steps 2–4 are skipped until `/resume-continuation` or `SessionEnd`.
 

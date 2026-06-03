@@ -15,6 +15,11 @@ BOULDER_FILE = "boulder.json"
 CONTINUATION_MARKER_DIR = f"{OMG_WORKSPACE_DIR}/run-continuation"
 PROMETHEUS_PLANS_DIRS = (f"{OMG_WORKSPACE_DIR}/plans",)
 TODO_MIRROR_DIR = f"{OMG_WORKSPACE_DIR}/todos"
+TODO_ENFORCER_DIR = "todo-enforcer"
+CONTINUATION_COOLDOWN_MS = 5_000
+MAX_CONSECUTIVE_FAILURES = 5
+FAILURE_RESET_WINDOW_MS = 5 * 60_000
+ABORT_WINDOW_MS = 3_000
 
 TODO_CONTINUATION_PROMPT = """[TODO CONTINUATION]
 
@@ -257,6 +262,60 @@ def mirror_todos(workspace: str, session_id: str, todos: list[dict]) -> None:
     dest.parent.mkdir(parents=True, exist_ok=True)
     payload = {"session_id": session_id, "updated_at": now_iso(), "todos": todos}
     dest.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+
+# --- todo enforcer (cooldown / abort window on Stop chain) ---
+
+
+def enforcer_state_path(session_id: str) -> Path:
+    return grok_home() / "state" / TODO_ENFORCER_DIR / session_id / "state.json"
+
+
+def read_enforcer_state(session_id: str) -> dict:
+    p = enforcer_state_path(session_id)
+    if not p.is_file():
+        return {}
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def write_enforcer_state(session_id: str, state: dict) -> None:
+    p = enforcer_state_path(session_id)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    state["updated_at"] = now_iso()
+    p.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+
+
+def should_skip_todo_continuation(session_id: str, stdin_data: dict) -> str | None:
+    """Return skip reason or None if continuation allowed."""
+    state = read_enforcer_state(session_id)
+    now_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
+    cooldown_until = state.get("cooldown_until_ms")
+    if isinstance(cooldown_until, int) and now_ms < cooldown_until:
+        return "cooldown"
+    abort_at = state.get("abort_detected_at_ms")
+    if isinstance(abort_at, int) and now_ms - abort_at < ABORT_WINDOW_MS:
+        return "abort_window"
+    failures = int(state.get("failure_count") or 0)
+    if failures >= MAX_CONSECUTIVE_FAILURES:
+        return "failure_backoff"
+    stop_reason = pick(stdin_data, "stopReason", "stop_reason")
+    if stop_reason and stop_reason.lower() not in ("end_turn", "endturn", ""):
+        state["abort_detected_at_ms"] = now_ms
+        write_enforcer_state(session_id, state)
+    return None
+
+
+def record_todo_continuation_fire(session_id: str) -> None:
+    state = read_enforcer_state(session_id)
+    now_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
+    state["last_fire_ms"] = now_ms
+    state["cooldown_until_ms"] = now_ms + CONTINUATION_COOLDOWN_MS
+    state["fire_count"] = int(state.get("fire_count") or 0) + 1
+    write_enforcer_state(session_id, state)
 
 
 # --- boulder.json ---
@@ -559,6 +618,10 @@ def evaluate_todo_stop(stdin_path: str, session_id: str, workspace: str) -> None
         mirror_todos(workspace, session_id, todos)
     if not incomplete:
         raise SystemExit(1)
+    skip = should_skip_todo_continuation(session_id, data)
+    if skip:
+        raise SystemExit(1)
+    record_todo_continuation_fire(session_id)
     total = len(todos)
     done = total - len(incomplete)
     todo_lines = "\n".join(
