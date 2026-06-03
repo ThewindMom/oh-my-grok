@@ -44,7 +44,7 @@ func EvaluateTodoStop(ev hookenv.Event) (bool, string) {
 		return false, ""
 	}
 	sid := ev.SessionID
-	ws := ev.WorkspaceRoot
+	ws := hookenv.Workspace(ev)
 	if sid == "" {
 		return false, ""
 	}
@@ -100,7 +100,7 @@ func EvaluateBoulderStop(ev hookenv.Event) (bool, string) {
 		return false, ""
 	}
 	sid := ev.SessionID
-	ws := ev.WorkspaceRoot
+	ws := hookenv.Workspace(ev)
 	if sid == "" || ws == "" {
 		return false, ""
 	}

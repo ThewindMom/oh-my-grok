@@ -47,10 +47,7 @@ func sessionID(ev hookenv.Event) string {
 }
 
 func workspace(ev hookenv.Event) string {
-	if ev.WorkspaceRoot != "" {
-		return ev.WorkspaceRoot
-	}
-	return os.Getenv("GROK_WORKSPACE_ROOT")
+	return hookenv.Workspace(ev)
 }
 
 func denyPreTool(w io.Writer, reason, fallback string) {

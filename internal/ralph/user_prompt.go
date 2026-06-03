@@ -16,7 +16,7 @@ var cancelRE = regexp.MustCompile(`(?i)^/?cancel-ralph\b`)
 
 // CollectUserPrompt handles ralph/ultrawork slash commands on UserPromptSubmit.
 func CollectUserPrompt(ev hookenv.Event) string {
-	ws := ev.WorkspaceRoot
+	ws := hookenv.Workspace(ev)
 	if ws == "" {
 		return ""
 	}

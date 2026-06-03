@@ -48,7 +48,7 @@ func CollectUserPrompt(ev hookenv.Event) string {
 		return ""
 	}
 	sid := ev.SessionID
-	ws := ev.WorkspaceRoot
+	ws := hookenv.Workspace(ev)
 
 	if planRE.MatchString(prompt) {
 		planModeOn(sid)

@@ -62,23 +62,7 @@ func pendingPlanCheckboxes(sessionDir, workspace string) []string {
 }
 
 func shouldAllow(ev hookenv.Event) bool {
-	sr := strings.ToLower(strings.TrimSpace(ev.StopReason))
-	if sr != "" && sr != "end_turn" && sr != "endturn" {
-		return true
-	}
-	if ev.StopHookActive {
-		return true
-	}
-	active := map[string]struct{}{
-		"running": {}, "pending": {}, "in_progress": {}, "in-progress": {}, "active": {},
-	}
-	for _, t := range ev.BackgroundTasks {
-		st, _ := t["status"].(string)
-		if _, ok := active[strings.ToLower(st)]; ok {
-			return true
-		}
-	}
-	return false
+	return hookenv.ShouldAllowStopOnAbort(ev.StopReason, ev.StopHookActive, ev.BackgroundTasks)
 }
 
 // EvaluateStop blocks when plan.md has unchecked items (stop-verify pending work).
@@ -105,10 +89,7 @@ func EvaluateStop(ev hookenv.Event) (bool, string) {
 	if blocks >= maxBlocks {
 		return false, ""
 	}
-	ws := ev.WorkspaceRoot
-	if ws == "" {
-		ws = os.Getenv("GROK_WORKSPACE_ROOT")
-	}
+	ws := hookenv.Workspace(ev)
 	sessionDir := findSessionDir(grokHome, sid)
 	planItems := pendingPlanCheckboxes(sessionDir, ws)
 	if len(planItems) == 0 {

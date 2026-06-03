@@ -14,9 +14,15 @@ Modeled on [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) `r
 
 After `<promise>DONE</promise>`, run `task(subagent_type="code-reviewer", ...)` (override via `RALPH_ORACLE_SUBAGENT`). Verifier output must include `Agent: oracle` and `<promise>VERIFIED</promise>`.
 
+## While active
+
+- Keep working until the completion promise tag (default `<promise>DONE</promise>`; ultrawork adds Oracle `<promise>VERIFIED</promise>`).
+- Do not ask the user to continue each turn — the Stop hook injects continuation.
+- Do not pause with "can we start the next phase?" — proceed autonomously until done or `/cancel-ralph`.
+
 ## Hooks
 
-- `user-prompt.sh` — start/cancel (merged UserPromptSubmit)
-- `stop-hook.sh` — continuation chain (`lib/stop-chain.sh`; Ralph first)
+- `user-prompt` — start/cancel (merged UserPromptSubmit)
+- `stop` — continuation chain (Ralph first; see `hooks/README.md`)
 
 Skills: `ralph-loop`, `ulw-loop`, `cancel-ralph` (oh-my-grok plugin; see `grok inspect`).

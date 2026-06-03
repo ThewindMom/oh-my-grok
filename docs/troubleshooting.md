@@ -24,6 +24,12 @@ Hooks deny `Write` / `StrReplace` / `Delete` until at least one catalog `SKILL.m
 - Run `grok inspect` and Read a skill whose description matches the task
 - Or Read `agent-skill-gate` from the oh-my-grok plugin path in inspect
 
+## Ralph / ultrawork stops and asks "next phase?" instead of continuing
+
+The Stop hook must see the workspace (stdin `workspaceRoot`/`cwd` or `GROK_WORKSPACE_ROOT`) and a routine stop reason (`EndTurn`, `completed`, etc.). If the loop never started, run `/ralph-loop` or `/ulw-loop` again after `grok plugin update oh-my-grok` and start a **new session** (or Hooks reload).
+
+While a loop is active, the agent must not ask for permission between iterations — only emit `<promise>DONE</promise>` (ultrawork: then Oracle `<promise>VERIFIED</promise>`) or `/cancel-ralph`.
+
 ## Ralph / ultrawork loop will not stop
 
 - Emit the completion promise tag required by the active loop (see `skills/ralph-loop/SKILL.md` or `skills/ulw-loop/SKILL.md`)

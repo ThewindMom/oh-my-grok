@@ -24,24 +24,7 @@ var incompleteStatuses = map[string]struct{}{
 
 // ShouldAllowStop returns true when stop should not be blocked by boulder/todo logic.
 func ShouldAllowStop(stopReason string, stopHookActive bool, backgroundTasks []map[string]any) bool {
-	sr := strings.ToLower(strings.TrimSpace(stopReason))
-	if sr != "" && sr != "end_turn" && sr != "endturn" {
-		return true
-	}
-	if stopHookActive {
-		return true
-	}
-	active := map[string]struct{}{
-		"running": {}, "pending": {}, "in_progress": {},
-		"in-progress": {}, "active": {},
-	}
-	for _, t := range backgroundTasks {
-		st, _ := t["status"].(string)
-		if _, ok := active[strings.ToLower(st)]; ok {
-			return true
-		}
-	}
-	return false
+	return hookenv.ShouldAllowStopOnAbort(stopReason, stopHookActive, backgroundTasks)
 }
 
 // FindSessionDir locates the Grok session resources directory.

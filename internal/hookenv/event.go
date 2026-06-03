@@ -28,7 +28,7 @@ func ReadEvent(r io.Reader) (Event, error) {
 	}
 	return Event{
 		SessionID:            pickString(raw, "sessionId", "session_id"),
-		WorkspaceRoot:        pickString(raw, "workspaceRoot", "workspace_root", "cwd"),
+		WorkspaceRoot:        WorkspaceFromRaw(raw),
 		ToolName:             pickString(raw, "toolName", "tool_name", "tool"),
 		ToolInput:            pickMap(raw, "toolInput", "tool_input", "input", "arguments", "rawInput"),
 		Prompt:               pickString(raw, "prompt", "userPrompt", "user_prompt", "message"),

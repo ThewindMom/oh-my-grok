@@ -32,6 +32,7 @@ Or invoke this skill and state the task in the same message.
 - Do not emit the completion promise early.
 - Use todos for multi-step work.
 - Each iteration must make real progress.
+- Do not ask the user to continue or start the "next phase" — the Stop hook auto-continues until the promise tag or `/cancel-ralph`.
 
 ## Ultrawork variant
 

@@ -95,7 +95,7 @@ func CollectStopContinuation(ev hookenv.Event) string {
 	if prompt == "" {
 		return ""
 	}
-	ws := ev.WorkspaceRoot
+	ws := hookenv.Workspace(ev)
 	sid := ev.SessionID
 
 	if stopContRE.MatchString(prompt) {

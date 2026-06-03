@@ -238,25 +238,12 @@ func buildContinuation(st *state) string {
 }
 
 func shouldAllowRalphStop(ev hookenv.Event) bool {
-	sr := strings.ToLower(strings.TrimSpace(ev.StopReason))
-	if sr != "" && sr != "end_turn" && sr != "endturn" {
-		return true
-	}
-	active := map[string]struct{}{
-		"running": {}, "pending": {}, "in_progress": {}, "active": {},
-	}
-	for _, t := range ev.BackgroundTasks {
-		st, _ := t["status"].(string)
-		if _, ok := active[strings.ToLower(st)]; ok {
-			return true
-		}
-	}
-	return false
+	return hookenv.ShouldAllowStopOnAbort(ev.StopReason, ev.StopHookActive, ev.BackgroundTasks)
 }
 
 // EvaluateStop implements ralph/ultrawork stop continuation (first in stop chain).
 func EvaluateStop(ev hookenv.Event) (bool, string) {
-	ws := ev.WorkspaceRoot
+	ws := hookenv.Workspace(ev)
 	if ws == "" {
 		return false, ""
 	}
