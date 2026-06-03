@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" session-start.sh",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" session-start",
             "timeout": 30
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" user-prompt.sh",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" user-prompt",
             "timeout": 20
           }
         ]
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" post-tool-read.sh",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" post-tool-read",
             "timeout": 10
           }
         ]
@@ -39,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" post-tool-todo-write.sh",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" post-tool-todo-write",
             "timeout": 10
           }
         ]
@@ -49,7 +49,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" post-tool-lsp.sh",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" post-tool-lsp",
             "timeout": 60
           }
         ]
@@ -61,7 +61,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" pre-tool-mutate.sh",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" pre-tool-use",
             "timeout": 10
           }
         ]
@@ -72,7 +72,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" stop-hook.sh",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" stop",
             "timeout": 15
           }
         ]
@@ -83,7 +83,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" session-end.sh",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" session-end",
             "timeout": 10
           }
         ]

@@ -4,6 +4,10 @@ __pycache__/
 *.bak
 .omg/
 
+# Go module vendor (never at repo root — conflicts with MCP vendor/)
+vendor/github.com/
+vendor/modules.txt
+
 # MCP vendor: commit dist/ only; rebuild with scripts/build-mcp-runtimes.sh
 vendor/ast-grep-core/
 vendor/*/node_modules/
