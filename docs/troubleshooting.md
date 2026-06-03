@@ -3,9 +3,28 @@
 ## Hooks do not run after install
 
 1. Confirm plugin is enabled: `grok plugin enable oh-my-grok`
-2. Reload hooks (`Ctrl+L` → Hooks) or start a new session
-3. Reinstall: `grok plugin install github:mihazs/oh-my-grok --trust`
-4. Check for duplicate manifests in `~/.grok/hooks/*.json` — remove or run `scripts/remove-global-overlays.sh`
+2. **Reload** in TUI: `Ctrl+L` (opens Hooks & Plugins) → Plugins tab → `r` (reload all plugins); then Hooks tab → `l` (reload hooks). Or start a **new Grok session**.
+3. Reinstall from source or GitHub (update may leave stale snapshot):
+   ```bash
+   grok plugin install github:mihazs/oh-my-grok --trust
+   # or for local clone:
+   grok plugin install "$(pwd)" --trust
+   ```
+4. Clean stale global overlays **and** stale plugin IDs in config (old "user/<hash>/name" entries left by prior installs can cause reload_plugins_impl to report 0 hooks or skip registration):
+   ```bash
+   bash scripts/remove-global-overlays.sh
+   ```
+5. Verify hooks are registered and firing:
+   - `grok plugin list` and `grok plugin details oh-my-grok` (should list "hooks")
+   - In TUI `Ctrl+L` → Hooks tab: look under **Plugin** source for oh-my-grok entries (SessionStart, UserPromptSubmit, PreToolUse, Stop, etc.)
+   - After a prompt in a fresh workspace: recent non-"test-*" dirs appear under `ls -t ~/.grok/state/skill-gate/ | head -3` and `~/.grok/state/using-superpowers/` (SessionStart + first UserPromptSubmit create these)
+   - Scrollback shows hook annotations (e.g. skill gate, ralph) only when plugins UI enabled.
+
+Stale entries example from real config that broke hook calls until cleaned + reload:
+```
+enabled = [ ..., "user/2dae73a2/oh-my-grok", "user/f0ac7909/superpowers", ... ]
+```
+The remove script now prunes these automatically.
 
 ## Stale plugin copy
 

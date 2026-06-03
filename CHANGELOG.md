@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 
 Releases are normally automated via [release-please](https://github.com/googleapis/release-please) when GitHub Actions billing is active. While Actions is disabled, use [`scripts/manual-release.sh`](scripts/manual-release.sh).
 
+## [0.2.1](https://github.com/mihazs/oh-my-grok/releases/tag/v0.2.1) (2026-06-03)
+
+### Fixes
+
+* Hooks from the plugin not being called after install or updates (stale `user/<hash>/name` entries in `~/.grok/config.toml` `[plugins] enabled` could cause `reload_plugins_impl` to report 0 hooks or skip registration of the current snapshot's `hooks/hooks.json`).
+* Expanded "Hooks do not run after install" troubleshooting with detailed reload steps (Plugins `r`, Hooks `l`), reinstall from path, verification commands (plugin list/details, TUI Hooks tab under Plugin source, recent non-test state dirs under `~/.grok/state/skill-gate/` and `using-superpowers/` after a prompt), and scrollback annotation notes.
+* `scripts/remove-global-overlays.sh` now also sanitizes stale plugin IDs from the enabled list (removes old `user/xxx/oh-my-grok` and `superpowers` entries, ensures canonical short names like `oh-my-grok` are present; backs up config). This complements the global hooks/skills/rules cleanup and `grok plugin enable`.
+
 ## [0.2.0](https://github.com/mihazs/oh-my-grok/releases/tag/v0.2.0) (2026-06-03)
 
 ### Features
