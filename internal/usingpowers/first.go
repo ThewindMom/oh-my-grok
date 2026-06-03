@@ -37,6 +37,12 @@ func resolveSkillPath() string {
 			return p
 		}
 	}
+	if root, err := hookenv.PluginRoot(); err == nil {
+		bundled := filepath.Join(root, "vendor", "superpowers", "skills", "using-superpowers", "SKILL.md")
+		if _, err := os.Stat(bundled); err == nil {
+			return bundled
+		}
+	}
 	plugins := filepath.Join(hookenv.GrokHome(), "installed-plugins")
 	entries, err := os.ReadDir(plugins)
 	if err != nil {

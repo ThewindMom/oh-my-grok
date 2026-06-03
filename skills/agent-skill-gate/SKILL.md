@@ -4,7 +4,7 @@ description: >
   MANDATORY before code changes, debugging, planning, or multi-step implementation in ANY
   repository. Discover skills via grok inspect, Read every SKILL.md whose description matches
   the task, then use tools. Hooks block mutating tools until at least one catalog skill was
-  Read. Works without superpowers or other plugins.
+  Read. superpowers skills ship bundled in oh-my-grok (vendor/superpowers/skills).
 ---
 
 # Agent Skill Gate

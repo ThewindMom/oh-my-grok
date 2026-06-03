@@ -42,6 +42,7 @@ It **complements** oh-my-openagent; it does **not** replace it. Use omo for Open
 
 | Feature | What it does | Toggle / entry |
 |---------|----------------|----------------|
+| **Bundled superpowers** | TDD, debugging, planning, verification skills (obra/superpowers) | `vendor/superpowers/skills/` |
 | **Skill gate** | Blocks mutating tools until matching `SKILL.md` is Read | (always on when catalog non-empty) |
 | **IntentGate** | Injects search / analyze / team / hyperplan mode banners from prompt keywords | `OMG_INTENT_GATE` (default `1`) |
 | **Hashline** | `LINE#ID` tags on Read; PreToolUse blocks stale anchors in `StrReplace` | `OMG_HASHLINE` · skill `hashline-edit` |

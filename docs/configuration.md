@@ -38,9 +38,13 @@ Keep workspace `AGENTS.md` focused on project constraints; use `docs/` in this p
 
 Local hook tests: `export GROK_PLUGIN_ROOT="$(pwd)"`.
 
-## superpowers plugin
+## Bundled superpowers
 
-The [superpowers](https://github.com/obra/superpowers) plugin may also register `SessionStart`. Both can run; avoid duplicating oh-my-grok hooks under `~/.grok/hooks/*.json`.
+[superpowers](https://github.com/obra/superpowers) skills ship inside oh-my-grok at `vendor/superpowers/skills/` (see `vendor/superpowers/VERSION`). You do **not** need a separate `grok plugin install` for superpowers.
+
+Maintainers refresh the vendor tree: `task vendor:superpowers` (or `bash scripts/vendor-superpowers.sh`).
+
+If you still have a standalone superpowers plugin installed, its skills also appear in `grok inspect`; oh-my-grok hooks own SessionStart / skill-gate — avoid duplicate global `~/.grok/hooks/*.json`.
 
 ## Stop continuation priority
 

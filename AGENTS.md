@@ -38,7 +38,7 @@ skills/*/SKILL.md         → user-invocable workflows (discovered by grok inspe
 rules/*.md                → injected on every UserPromptSubmit (with workspace AGENTS.md)
 ```
 
-**superpowers** may also register `SessionStart`; both can run. Do not register duplicate oh-my-grok hooks globally.
+**superpowers** skills are **bundled** at `vendor/superpowers/skills/` (`plugin.json` `skills` paths). Do not register duplicate oh-my-grok hooks globally. Refresh vendor: `task vendor:superpowers`.
 
 ---
 

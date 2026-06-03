@@ -1,6 +1,6 @@
 # Skills and slash commands
 
-oh-my-grok bundles user-invocable skills under `skills/`. Grok discovers them via `grok inspect`.
+oh-my-grok bundles user-invocable skills under `skills/` plus **[superpowers](https://github.com/obra/superpowers)** at `vendor/superpowers/skills/` (no separate superpowers plugin install). Grok discovers both via `plugin.json` and `grok inspect`.
 
 ## Skill gate flow
 

@@ -217,6 +217,12 @@ func discoverSkillsOnDisk(sessionID, workspace string) error {
 	scanRoot(workspace, "project")
 	if root, err := hookenv.PluginRoot(); err == nil {
 		scanRoot(root, "plugin")
+		bundledSkills := filepath.Join(root, "vendor", "superpowers", "skills")
+		if entries, err := os.ReadDir(bundledSkills); err == nil {
+			for _, name := range sortedNames(entries) {
+				add(filepath.Join(bundledSkills, name, "SKILL.md"), "plugin")
+			}
+		}
 	}
 	scanRoot(hookenv.GrokHome(), "user")
 

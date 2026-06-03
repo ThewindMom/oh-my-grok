@@ -5,7 +5,7 @@
 - [Grok Build CLI](https://github.com/xai-org/grok) with plugin support (`grok plugin install`, `grok plugin enable`)
 - Network access to GitHub for `github:mihazs/oh-my-grok`
 
-Hooks ship as prebuilt **`bin/omg-hook-*`** binaries (no Python required). Optional: **`grok`** for skill catalog refresh (`grok inspect --json`); **`node`** for LSP post-edit diagnostics when using the bundled LSP MCP.
+Hooks ship as prebuilt **`bin/omg-hook-*`** binaries (no Python required). **superpowers** skills are bundled under `vendor/superpowers/skills/` — no separate superpowers install required. Optional: **`grok`** for skill catalog refresh (`grok inspect --json`); **`node`** for LSP post-edit diagnostics when using the bundled LSP MCP.
 
 ## Install from GitHub
 

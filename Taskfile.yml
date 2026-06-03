@@ -77,6 +77,11 @@ tasks:
     cmds:
       - bash scripts/build-mcp-runtimes.sh
 
+  vendor:superpowers:
+    desc: Refresh vendor/superpowers/skills from obra/superpowers (SUPERPOWERS_REF=v5.1.0)
+    cmds:
+      - bash scripts/vendor-superpowers.sh
+
   validate:
     desc: grok plugin validate (requires Grok CLI)
     cmds:
