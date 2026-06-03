@@ -3,11 +3,23 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib/common.sh
 source "${SCRIPT_DIR}/lib/common.sh"
+# shellcheck source=lib/prometheus.sh
+source "${SCRIPT_DIR}/lib/prometheus.sh"
 
 stdin_tmp="$(mktemp)"
 trap 'rm -f "$stdin_tmp"' EXIT
 cat >"$stdin_tmp" || true
 apply_hook_env_from_stdin "$stdin_tmp"
+
+prometheus_deny=""
+prometheus_rc=0
+set +e
+prometheus_deny="$(evaluate_prometheus_pre_tool "$stdin_tmp" 2>&1)"
+prometheus_rc=$?
+set -e
+if [ "$prometheus_rc" -eq 2 ]; then
+  emit_deny "${prometheus_deny:-Prometheus plan mode: only .omg/**/*.md writes allowed.}"
+fi
 
 ensure_skill_catalog
 
