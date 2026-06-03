@@ -40,14 +40,22 @@ It **complements** oh-my-openagent; it does **not** replace it. Use omo for Open
 
 ## Features
 
-- 🛡️ **Skill gate** — blocks mutating tools until matching `SKILL.md` files are Read
-- 🔁 **Ralph loop** — `/ralph-loop` work-until-done via Stop-hook continuations
-- ⚡ **Ultrawork** — `/ulw-loop` / `/ultrawork` with mandatory verifier before exit
-- 🪨 **Todo + boulder** — plan progress and todo mirroring under `.omg/`
-- 📋 **Handoff** — `/handoff` structured context for new sessions
-- 🔗 **Merged hooks** — one `UserPromptSubmit` payload (no context overwrite)
-- 📄 **Workspace context** — project `AGENTS.md` + plugin rules every prompt
-- 🛑 **Stop chain** — Ralph → boulder → todos → plan (documented priority)
+| Feature | What it does | Toggle / entry |
+|---------|----------------|----------------|
+| **Skill gate** | Blocks mutating tools until matching `SKILL.md` is Read | (always on when catalog non-empty) |
+| **IntentGate** | Injects search / analyze / team / hyperplan mode banners from prompt keywords | `OMG_INTENT_GATE` (default `1`) |
+| **Hashline** | `LINE#ID` tags on Read; PreToolUse blocks stale anchors in `StrReplace` | `OMG_HASHLINE` · skill `hashline-edit` |
+| **Prometheus** | `/plan` interview + md-only writes; `/start-work` → boulder | `OMG_PLAN_MODE` · skill `prometheus-plan` |
+| **ast-grep** | Bundled MCP for structural search / rewrite | `.mcp.json` · skill `ast-grep` |
+| **LSP** | Post-edit error diagnostics; Stop blocks until fixed | `OMG_LSP_ENFORCE` · skill `lsp` |
+| **Todo enforcer** | Cooldown + abort window so Stop todo continuation does not spin | (built into Stop chain) |
+| **Ralph / Ultrawork** | Work-until-done loops via Stop | `/ralph-loop`, `/ulw-loop` |
+| **Todo + boulder** | Plan progress + todo mirror under `.omg/` | Stop chain steps 2–3 |
+| **Handoff** | `/handoff` session summary for the next chat | `/handoff` |
+| **Merged hooks** | One `UserPromptSubmit` payload (no overwrite) | `user-prompt.sh` |
+| **Stop chain** | Ralph → boulder → todos → LSP → `plan.md` | [hooks/README.md](hooks/README.md) |
+
+`OMG_*` env vars: [docs/configuration.md](docs/configuration.md).
 
 ---
 

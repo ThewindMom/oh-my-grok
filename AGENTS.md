@@ -27,10 +27,14 @@ hooks/user-prompt.sh      → single merged additionalContext (do not split into
 hooks/stop-hook.sh        → lib/stop-chain.sh (first block wins)
 hooks/lib/
   common.sh               → GROK_HOME, PLUGIN_ROOT, skill catalog, session state
+  intent-gate.sh          → keyword modes (IntentGate)
+  prometheus.sh           → /plan, plan-mode PreToolUse guard
+  hashline.sh + hashline.py → read cache, LINE#ID PreToolUse guard
+  lsp.sh                  → diagnostics stash, post-tool + Stop
   ralph-loop.sh           → /ralph-loop, /ulw-loop, /cancel-ralph
   handoff.sh              → /handoff
-  todo-boulder.sh         → boulder + todo continuation
-  omo_state.py            → .omg paths, boulder.json, plan progress
+  todo-boulder.sh         → boulder + todo continuation (+ todo enforcer in omo_state.py)
+  omo_state.py            → .omg paths, boulder.json, plan progress, todo-enforcer state
 skills/*/SKILL.md         → user-invocable workflows (discovered by grok inspect)
 rules/*.md                → injected on every UserPromptSubmit (with workspace AGENTS.md)
 ```
@@ -43,7 +47,7 @@ rules/*.md                → injected on every UserPromptSubmit (with workspace
 
 | Location | Owner | Examples |
 |----------|--------|----------|
-| **`~/.grok/`** | Grok harness | `installed-plugins/`, `state/skill-gate/<session>/`, `state/stop-continuation/`, `sessions/` |
+| **`~/.grok/`** | Grok harness | `installed-plugins/`, `state/skill-gate/`, `state/hashline/`, `state/lsp-diagnostics/`, `state/todo-enforcer/`, `state/stop-continuation/`, `sessions/` |
 | **`.omg/`** (per workspace) | oh-my-grok runtime | `boulder.json`, `plans/`, `todos/`, `ralph-loop.local.md`, `handoffs/` |
 
 Analogous to omo’s **`.omo/`** in OpenCode workspaces. Never store plugin source or session catalogs under `.omg/`.
@@ -59,6 +63,10 @@ Analogous to omo’s **`.omo/`** in OpenCode workspaces. Never store plugin sour
 | `ulw-loop` | `/ulw-loop "task"` | same + Oracle verification pending |
 | `cancel-ralph` | `/cancel-ralph` | clears `.omg/ralph-loop.local.md` |
 | `handoff` | `/handoff` | `handoff.sh` injects PHASE 0–4 instructions |
+| `prometheus-plan` | `/plan`, `/prometheus` | `prometheus.sh` + `pre-tool-mutate.sh` |
+| `hashline-edit` | (workflow) | `hashline.sh`, `post-tool-read.sh` |
+| `ast-grep` | MCP tools | `.mcp.json` + `vendor/ast-grep-mcp` |
+| `lsp` | MCP + hook stash | `lsp.sh`, `post-tool-lsp.sh`, Stop step 4 |
 
 User-facing pause/resume: `/stop-continuation`, `/resume-continuation` (see `rules/12-todo-boulder.md`).
 
@@ -76,6 +84,8 @@ Full event map and stop priority: **`hooks/README.md`** (read when touching Stop
 | Ralph / ultrawork | `skills/ralph-loop/SKILL.md`, `skills/ulw-loop/SKILL.md`, `rules/10-ralph-loop.md` |
 | Boulder + todos | `rules/12-todo-boulder.md`, `hooks/lib/omo_state.py` |
 | Handoff format | `skills/handoff/SKILL.md`, `rules/11-handoff.md` |
+| IntentGate / Prometheus / hashline / LSP | `hooks/lib/{intent-gate,prometheus,hashline,lsp}.sh`, `docs/configuration.md` |
+| ast-grep MCP build | `scripts/build-mcp-runtimes.sh`, `vendor/ast-grep-mcp/` |
 | Remove stale global install | `scripts/remove-global-overlays.sh` |
 
 Do not paste entire skill bodies into this file. Load the path from `grok inspect` when implementing.
@@ -99,6 +109,10 @@ bash hooks/test-stop-verify.sh
 bash hooks/test-using-superpowers-first-prompt.sh
 bash hooks/test-handoff.sh
 bash hooks/test-workspace-context.sh
+bash hooks/test-intent-gate.sh
+bash hooks/test-prometheus.sh
+bash hooks/test-hashline.sh
+bash hooks/test-lsp.sh
 ```
 
 4. Refresh install: `grok plugin update oh-my-grok` (or `grok plugin install "$(pwd)" --trust`).
@@ -118,6 +132,13 @@ Optional E2E: `bash hooks/test-inline-skill-gate.sh` (needs `grok` CLI + trusted
 | Always-on Composer rules | `rules/*.md` (keep short) | 30+ “don’t” lines without “do” alternatives |
 | Workspace file paths (boulder, todos) | `hooks/lib/omo_state.py` constants + docs | Hardcoded `/home/...` paths anywhere in repo |
 | Stop continuation order | `hooks/lib/stop-chain.sh` only | Second Stop hook registration |
+| IntentGate keyword modes | `hooks/lib/intent-gate.sh`, `rules/13-intent-gate.md` | Duplicate mode logic in `user-prompt.sh` |
+| Prometheus plan mode | `hooks/lib/prometheus.sh`, `skills/prometheus-plan/` | Allow non-`.omg` writes while plan mode active |
+| Hashline LINE#ID guard | `hooks/lib/hashline.sh`, `hashline.py`, `post-tool-read.sh` | Second PreToolUse hook in `hooks.json` |
+| LSP stash + Stop block | `hooks/lib/lsp.sh`, `post-tool-lsp.sh` | Inline LSP calls in `stop-hook.sh` |
+| ast-grep / lsp MCP dist | `scripts/build-mcp-runtimes.sh`, `vendor/*` | Commit `node_modules` (run build script) |
+| Todo enforcer cooldown | `hooks/lib/omo_state.py`, `todo-boulder.sh` | Ad-hoc sleep in `stop-hook.sh` |
+| Feature smoke test | `hooks/test-<feature>.sh` | Skipping tests when adding `hooks/lib/*.sh` |
 
 Pair every **don’t** with a **do** in rules (e.g. don’t add global `~/.grok/hooks/*.json` → do install via `grok plugin install`).
 

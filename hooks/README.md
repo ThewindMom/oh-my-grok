@@ -9,8 +9,9 @@ Plugin manifest: **`hooks/hooks.json`** (loaded via `GROK_PLUGIN_ROOT`). **Do no
 | `SessionStart` | `session-start.sh` | Skill catalog + skill-gate rules |
 | `UserPromptSubmit` | **`user-prompt.sh`** | **One** merged `additionalContext` (see below) |
 | `PreToolUse` | `pre-tool-mutate.sh` | Block writes until a skill is Read |
-| `PostToolUse` (Read) | `post-tool-read.sh` | Mark skill loaded when `SKILL.md` is Read |
+| `PostToolUse` (Read) | `post-tool-read.sh` | Skill gate + hashline read cache |
 | `PostToolUse` (TodoWrite) | `post-tool-todo-write.sh` | Mirror todos → `.omg/todos/<session>.json` |
+| `PostToolUse` (Write\|StrReplace) | `post-tool-lsp.sh` | LSP diagnostics → `~/.grok/state/lsp-diagnostics/<session>.json` |
 | `Stop` | `stop-hook.sh` | Continuation chain (`lib/stop-chain.sh`) |
 | `SessionEnd` | `session-end.sh` | Reset session state |
 
@@ -20,11 +21,14 @@ Plugin manifest: **`hooks/hooks.json`** (loaded via `GROK_PLUGIN_ROOT`). **Do no
 
 1. `using-superpowers` (first prompt only)
 2. Workspace `AGENTS.md` + plugin `rules/*.md` (every prompt; size-capped)
-3. Ralph / ultrawork commands (`/ralph-loop`, `/cancel-ralph`, …)
-4. `/handoff` — session handoff summary (handoff skill; omo port)
-5. `/stop-continuation`, `/resume-continuation`
-6. Boulder context (`.omg/boulder.json`)
-7. Skill-gate reminder
+3. Ralph / ultrawork (`lib/ralph-loop.sh`)
+4. **IntentGate** (`lib/intent-gate.sh`) — search / analyze / team / hyperplan banners (`OMG_INTENT_GATE`)
+5. **Prometheus** (`lib/prometheus.sh`) — `/plan`, `/start-work`, plan-mode state
+6. `/handoff`, `/stop-continuation`, `/resume-continuation`
+7. Boulder context (`.omg/boulder.json`)
+8. **LSP** (`lib/lsp.sh`) — `<LSP_DIAGNOSTICS>` from session stash
+9. **Hashline** (`lib/hashline.sh`) — `<HASHLINE_CACHE>` for recently read files
+10. Skill-gate reminder
 
 ## Stop (priority chain)
 
@@ -32,12 +36,15 @@ Plugin manifest: **`hooks/hooks.json`** (loaded via `GROK_PLUGIN_ROOT`). **Do no
 
 1. **Ralph / ultrawork** — not affected by `/stop-continuation` (but `/stop-continuation` clears loop state)
 2. **Boulder** — `.omg/plans/*.md` progress
-3. **Todo continuation** — incomplete `TodoWrite` items (5s cooldown between fires)
-4. **plan.md** — root/session unchecked boxes (fallback)
+3. **Todo continuation** — incomplete `TodoWrite` items (**todo enforcer**: 5s cooldown, 3s abort window on non-`end_turn` stops; state in `~/.grok/state/todo-enforcer/<session>/state.json`)
+4. **LSP** — error diagnostics in stash (`lib/lsp.sh`; skip when `OMG_LSP_ENFORCE=0`)
+5. **plan.md** — root/session unchecked boxes (fallback)
 
-Grok fires **`Stop`** (not Claude Code’s `session.idle`). Todo enforcer state lives under `~/.grok/state/todo-enforcer/<session>/state.json`: after a block, another todo continuation cannot fire for **5 seconds** (`CONTINUATION_COOLDOWN_MS`); non-`end_turn` stop reasons set a **3s abort window** where continuation is skipped.
+Grok fires **`Stop`** (not Claude Code’s `session.idle`).
 
-After `/stop-continuation`, steps 2–4 are skipped until `/resume-continuation` or `SessionEnd`.
+After `/stop-continuation`, steps 2–5 are skipped until `/resume-continuation` or `SessionEnd`.
+
+**PreToolUse** (`pre-tool-mutate.sh`): prometheus plan-mode deny → hashline stale `LINE#ID` deny → skill gate.
 
 ## Workspace state (`.omg/`)
 
@@ -50,7 +57,9 @@ After `/stop-continuation`, steps 2–4 are skipped until `/resume-continuation`
 | `.omg/ralph-loop.local.md` | Ralph / ultrawork loop |
 | `.omg/handoffs/*.md` | Saved handoff summaries |
 
-Session hook state (skill catalog, stop-verify) stays under **`~/.grok/state/`** (Grok home).
+Session hook state under **`~/.grok/state/`**: skill-gate, stop-continuation, **hashline** (`state/hashline/<session>/`), **lsp-diagnostics** (`state/lsp-diagnostics/<session>.json`), **todo-enforcer**.
+
+Bundled MCP (optional): `.mcp.json` — `ast_grep`, `lsp` under `vendor/` (see `skills/ast-grep`, `skills/lsp`).
 
 ## Plugin overlap
 
@@ -68,4 +77,10 @@ bash hooks/test-ulw-loop.sh
 bash hooks/test-todo-boulder.sh
 bash hooks/test-using-superpowers-first-prompt.sh
 bash hooks/test-handoff.sh
+bash hooks/test-intent-gate.sh
+bash hooks/test-prometheus.sh
+bash hooks/test-hashline.sh
+bash hooks/test-lsp.sh
 ```
+
+`OMG_*` toggles: [docs/configuration.md](../docs/configuration.md).

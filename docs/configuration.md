@@ -4,7 +4,7 @@
 
 | Path | Owner | Contents |
 |------|--------|----------|
-| `~/.grok/` | Grok harness | `installed-plugins/`, `state/skill-gate/<session>/`, `state/stop-continuation/` |
+| `~/.grok/` | Grok harness | `installed-plugins/`, `state/skill-gate/`, `state/hashline/`, `state/lsp-diagnostics/`, `state/todo-enforcer/`, `state/stop-continuation/` |
 | `.omg/` (per workspace) | oh-my-grok | `boulder.json`, `plans/`, `todos/`, `ralph-loop.local.md`, `handoffs/` |
 
 Do not store plugin source or session catalogs under `.omg/`. `.omg/` is gitignored in this repo.
@@ -48,7 +48,8 @@ See [hooks/README.md](../hooks/README.md). First block wins:
 
 1. Ralph / ultrawork loop
 2. Boulder (`.omg/plans/`)
-3. Todo continuation
-4. Root `plan.md` fallback
+3. Todo continuation (todo enforcer cooldown / abort window)
+4. LSP error diagnostics stash (`OMG_LSP_ENFORCE`)
+5. Root `plan.md` fallback
 
-`/stop-continuation` pauses steps 2–4 until `/resume-continuation` or session end.
+`/stop-continuation` pauses steps 2–5 until `/resume-continuation` or session end.
