@@ -29,6 +29,7 @@ func NewRoot() *cobra.Command {
 		subagentStopCmd(),
 		preCompactCmd(),
 		postCompactCmd(),
+		doctorCmd(),
 	)
 	return root
 }

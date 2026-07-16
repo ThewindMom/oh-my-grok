@@ -1,173 +1,61 @@
 # oh-my-grok
 
-<p align="center">
-  <img src=".github/oh-my-grok.svg" alt="oh-my-grok" width="100" />
-</p>
+A Grok-native productivity plugin for Grok Build CLI, inspired by [Oh My OpenAgent](https://github.com/code-yeongyu/oh-my-openagent) but implemented independently against documented Grok Build APIs.
 
-**The missing productivity layer for the new Grok Build CLI.**
+## What it provides
 
-Makes Grok significantly more effective at long-running tasks with proven loops and state management.
+- **9 specialist agents**: Sisyphus (coordinator), Atlas (plan executor), Hephaestus (implementer), Prometheus (planner), Metis (gap analyst), Momus (reviewer), Oracle (judgment), Librarian (research), Explore (search)
+- **Hashline MCP**: line-anchored file reading and editing with stale-anchor detection, overlap rejection, atomic writes, and unified diffs
+- **Deterministic hooks**: 14 lifecycle event handlers with ordered pipelines
+- **Continuation engine**: Ralph and Ultrawork loops with bounded iterations, cooldowns, and repeated-state detection
+- **Structured configuration**: typed JSONC with env/workspace/user/default precedence
+- **8 slash commands**: /ultrawork, /ulw-loop, /ralph-loop, /plan, /start-work, /handoff, /stop-continuation, /resume-continuation
+- **10 original skills**: disciplined implementation, debugging, code review, git workflow, and more
 
-[![CI](https://github.com/mihazs/oh-my-grok/actions/workflows/ci.yml/badge.svg)](https://github.com/mihazs/oh-my-grok/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/github/license/mihazs/oh-my-grok?style=flat-square)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/mihazs/oh-my-grok?style=flat-square)](https://github.com/mihazs/oh-my-grok/stargazers)
-[![Release](https://img.shields.io/github/v/release/mihazs/oh-my-grok?style=flat-square)](https://github.com/mihazs/oh-my-grok/releases)
-[![Grok Build](https://img.shields.io/badge/Grok%20Build-0.1.x%2B-111827?style=flat-square)](docs/installation.md)
-
-```bash
-grok plugin install github.com/mihazs/oh-my-grok --trust && grok plugin enable oh-my-grok
-```
-
-Pinned release:
+## Installation
 
 ```bash
-grok plugin install github.com/mihazs/oh-my-grok@v0.1.0 --trust
+grok plugin install "$(pwd)" --trust
 ```
 
-**Author:** [mihazs](https://github.com/mihazs) · **Repository:** https://github.com/mihazs/oh-my-grok
+Or from GitHub:
 
----
+```bash
+grok plugin install mihazs/oh-my-grok --trust
+```
 
-## Why oh-my-grok?
+## Uninstall
 
-Grok Build CLI launched with a thin plugin ecosystem — no mature “oh-my” productivity layer for long-running agentic work.
+```bash
+grok plugin uninstall oh-my-grok --confirm
+```
 
-**oh-my-grok** fills that gap: skill gate, Ralph and Ultrawork loops, todo/boulder continuation, handoff, and a unified Stop chain — ported from proven [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) patterns into a **Grok-native** plugin (hooks + skills + rules, workspace state in **`.omg/`**).
-
-It **complements** oh-my-openagent; it does **not** replace it. Use omo for OpenCode/Codex/multi-harness; use oh-my-grok when you work in **Grok Build** only.
-
----
-
-## Features
-
-| Feature | What it does | Toggle / entry |
-|---------|----------------|----------------|
-| **Bundled superpowers** | TDD, debugging, planning, verification skills (obra/superpowers) | `vendor/superpowers/skills/` |
-| **Skill gate** | Blocks mutating tools until matching `SKILL.md` is Read | (always on when catalog non-empty) |
-| **IntentGate** | Injects search / analyze / team / hyperplan mode banners from prompt keywords | `OMG_INTENT_GATE` (default `1`) |
-| **Hashline** | `LINE#ID` tags on Read; PreToolUse blocks stale anchors in `StrReplace` | `OMG_HASHLINE` · skill `hashline-edit` |
-| **Prometheus** | `/plan` interview + md-only writes; `/start-work` → boulder | `OMG_PLAN_MODE` · skill `prometheus-plan` |
-| **ast-grep** | Bundled MCP for structural search / rewrite | `.mcp.json` · skill `ast-grep` |
-| **LSP** | Post-edit error diagnostics; Stop blocks until fixed | `OMG_LSP_ENFORCE` · skill `lsp` |
-| **Todo enforcer** | Cooldown + abort window so Stop todo continuation does not spin | (built into Stop chain) |
-| **Ralph / Ultrawork** | Work-until-done loops via Stop | `/ralph-loop`, `/ulw-loop` |
-| **Todo + boulder** | Plan progress + todo mirror under `.omg/` | Stop chain steps 2–3 |
-| **Handoff** | `/handoff` session summary for the next chat | `/handoff` |
-| **Merged hooks** | One `UserPromptSubmit` payload (no overwrite) | `user-prompt.sh` |
-| **Stop chain** | Ralph → boulder → todos → LSP → `plan.md` | [hooks/README.md](hooks/README.md) |
-
-`OMG_*` env vars: [docs/configuration.md](docs/configuration.md).
-
----
-
-## Demo
-
-Visual demos (TUI with plugin enabled, `/ralph-loop` in action) coming soon.
-
----
-
-## Compatibility
-
-Requires **Grok Build CLI 0.1.x or newer** (tested with **0.2.x**).
-
-| Check | Where |
-|-------|--------|
-| `grok plugin validate .` | After install (local Grok CLI) |
-| Hook smoke tests | GitHub Actions CI when billing active |
-| Inline skill-gate E2E | Local: `hooks/test-inline-skill-gate.sh` |
-
-Reload hooks after install: new session or TUI `Ctrl+L` → Hooks.
-
----
-
-## Comparison
-
-| | Vanilla Grok Build | oh-my-grok |
-|--|-------------------|------------|
-| **Productivity plugin** | Bring your own / none | Batteries-included oh-my patterns |
-| **Skill gate** | Manual | Hook-enforced catalog Read |
-| **Long-running loops** | No | `/ralph-loop`, `/ulw-loop` |
-| **Workspace state** | Ad hoc | `.omg/` (boulder, todos, handoff, ralph) |
-| **Stop continuation** | Session ends | Unified Stop chain with pause/resume |
-
-Upstream inspiration for loop/boulder/handoff patterns: [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) (different harness).
-
----
-
-## Quick start
-
-1. Install and enable (commands above).
-2. Open a project; optional: add `AGENTS.md` at repo root.
-3. Run a slash command:
-
-| Command | Effect | Example |
-|---------|--------|---------|
-| `/ralph-loop "task"` | Work-until-done loop | `/ralph-loop "fix failing hook tests"` |
-| `/ulw-loop "task"` | Ralph + verification | `/ultrawork "ship docs polish"` |
-| `/cancel-ralph` | Clear loop state | `/cancel-ralph` |
-| `/handoff` | Session handoff summary | `/handoff` |
-| `/stop-continuation` | Pause auto-continue | `/stop-continuation` |
-| `/resume-continuation` | Resume auto-continue | `/resume-continuation` |
-
-**Docs:** [Installation](docs/installation.md) · [Skills](docs/skills.md) · [Configuration](docs/configuration.md) · [Troubleshooting](docs/troubleshooting.md) · [Examples](docs/examples/README.md) · [Roadmap](ROADMAP.md)
-
-**Hook internals:** [hooks/README.md](hooks/README.md)
-
----
+This removes only plugin-owned files. It does not delete unrelated Grok files.
 
 ## Configuration
 
-See [docs/configuration.md](docs/configuration.md) — `.omg/` workspace state, `~/.grok/installed-plugins/`, no duplicate `~/.grok/hooks/`.
+Configuration is loaded with this precedence (highest first):
 
----
+1. Environment variables (`OMG_*`)
+2. Workspace config: `.omg/config.jsonc`
+3. User config: `~/.grok/oh-my-grok/config.jsonc`
+4. Built-in defaults
 
-## Custom skills
+See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for the full reference.
 
-Project skills: `.agents/skills/` or `.grok/skills/`. Full catalog via `grok inspect`. Details: [docs/skills.md](docs/skills.md).
+## Privacy
 
----
+This plugin does **not** transmit any data to external services. See [docs/PRIVACY.md](docs/PRIVACY.md).
 
-## Troubleshooting
+## Licensing
 
-[docs/troubleshooting.md](docs/troubleshooting.md) — stale install, double hooks, skill-gate blocks, loops that won’t stop.
+MIT licensed. See [LICENSE](LICENSE) and [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
----
+This plugin is inspired by but does not redistribute SUL-covered Oh My OpenAgent source.
 
-## Skip This README
+## Grok limitations
 
-**Agents:** use implementation docs, not this marketing page:
-
-```
-https://raw.githubusercontent.com/mihazs/oh-my-grok/main/AGENTS.md
-https://raw.githubusercontent.com/mihazs/oh-my-grok/main/docs/installation.md
-```
-
----
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) — conventional commits, hook tests, complements oh-my-openagent.
-
-[Open an issue](https://github.com/mihazs/oh-my-grok/issues/new/choose) for bugs or feature requests.
-
-## Support
-
-- **Issues:** [GitHub Issues](https://github.com/mihazs/oh-my-grok/issues) (bug / feature templates)
-- **Roadmap:** [ROADMAP.md](ROADMAP.md)
-- **Releases:** [CHANGELOG.md](CHANGELOG.md) — [v0.1.0](https://github.com/mihazs/oh-my-grok/releases/tag/v0.1.0) published; use `scripts/manual-release.sh` when Actions billing is locked
-
-## Develop
-
-```bash
-cd oh-my-grok
-grok plugin validate .
-export GROK_PLUGIN_ROOT="$(pwd)"
-for t in hooks/test-*.sh; do
-  case "$(basename "$t")" in test-inline-skill-gate.sh) continue ;; esac
-  bash "$t"
-done
-```
-
-## License
-
-[MIT](LICENSE)
+- Subagents are one level deep — leaf agents cannot spawn children
+- Only `PreToolUse` hooks can block tool calls; all other hooks are passive
+- Agent model IDs must exist in the user's Grok configuration
+- No native output transformation (PostToolUse is passive)
