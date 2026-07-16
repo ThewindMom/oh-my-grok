@@ -22,9 +22,21 @@
         ]
       }
     ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|StrReplace|EditNotebook|Delete|search_replace",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" pre-tool-use",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
-        "matcher": "Read",
+        "matcher": "Read|read_file",
         "hooks": [
           {
             "type": "command",
@@ -34,7 +46,7 @@
         ]
       },
       {
-        "matcher": "TodoWrite",
+        "matcher": "TodoWrite|todo_write",
         "hooks": [
           {
             "type": "command",
@@ -44,7 +56,7 @@
         ]
       },
       {
-        "matcher": "Write|StrReplace",
+        "matcher": "Write|StrReplace|search_replace",
         "hooks": [
           {
             "type": "command",
@@ -54,13 +66,23 @@
         ]
       }
     ],
-    "PreToolUse": [
+    "PostToolUseFailure": [
       {
-        "matcher": "Write|StrReplace|EditNotebook|Delete",
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" pre-tool-use",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" post-tool-failure",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PermissionDenied": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" permission-denied",
             "timeout": 10
           }
         ]
@@ -73,6 +95,72 @@
             "type": "command",
             "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" stop",
             "timeout": 15
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" stop-failure",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" notification",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" subagent-start",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" subagent-stop",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" pre-compact",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" post-compact",
+            "timeout": 10
           }
         ]
       }

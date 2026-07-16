@@ -20,7 +20,15 @@ func NewRoot() *cobra.Command {
 		postToolReadCmd(),
 		postToolTodoWriteCmd(),
 		postToolLSPCmd(),
+		postToolFailureCmd(),
+		permissionDeniedCmd(),
 		stopCmd(),
+		stopFailureCmd(),
+		notificationCmd(),
+		subagentStartCmd(),
+		subagentStopCmd(),
+		preCompactCmd(),
+		postCompactCmd(),
 	)
 	return root
 }
