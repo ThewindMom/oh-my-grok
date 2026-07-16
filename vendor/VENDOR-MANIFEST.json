@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "components": [
+    {
+      "name": "superpowers",
+      "path": "vendor/superpowers/",
+      "upstream": "https://github.com/obra/superpowers.git",
+      "ref": "v5.1.0",
+      "license": "MIT",
+      "license_file": "vendor/superpowers/LICENSE",
+      "source_file": "vendor/superpowers/SOURCE",
+      "version_file": "vendor/superpowers/VERSION",
+      "contents": "skills only",
+      "modifications": "none"
+    },
+    {
+      "name": "cobra",
+      "path": "vendor/github.com/spf13/cobra/",
+      "upstream": "https://github.com/spf13/cobra",
+      "ref": "v1.8.1",
+      "license": "Apache-2.0",
+      "license_file": "vendor/github.com/spf13/cobra/LICENSE.txt",
+      "pinned_in": "go.mod"
+    },
+    {
+      "name": "pflag",
+      "path": "vendor/github.com/spf13/pflag/",
+      "upstream": "https://github.com/spf13/pflag",
+      "ref": "v1.0.5",
+      "license": "BSD-3-Clause",
+      "license_file": "vendor/github.com/spf13/pflag/LICENSE",
+      "pinned_in": "go.mod"
+    },
+    {
+      "name": "mousetrap",
+      "path": "vendor/github.com/inconshreveable/mousetrap/",
+      "upstream": "https://github.com/inconshreveable/mousetrap",
+      "ref": "v1.1.0",
+      "license": "Apache-2.0",
+      "license_file": "vendor/github.com/inconshreveable/mousetrap/LICENSE",
+      "pinned_in": "go.mod"
+    }
+  ],
+  "removed": [
+    {
+      "name": "ast-grep-mcp",
+      "reason": "SUL 1.0 (incompatible with MIT fork); no per-file license",
+      "removed_in": "omo-parity"
+    },
+    {
+      "name": "lsp-tools-mcp",
+      "reason": "vendored copy lacked LICENSE/NOTICE/SOURCE pins; build script broken",
+      "removed_in": "omo-parity"
+    }
+  ]
+}
