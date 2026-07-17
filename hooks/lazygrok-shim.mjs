@@ -104,9 +104,14 @@ process.stdin.on("end", () => {
   }
 
   // Spawn the actual hook component with the translated input
+  // Set CODEX_HOME if not already set — the lsp hook needs it to find the daemon socket
+  const childEnv = { ...env };
+  if (!childEnv.CODEX_HOME) {
+    childEnv.CODEX_HOME = env.HOME ? `${env.HOME}/.codex` : "/tmp/codex-home";
+  }
   const child = spawn("node", [cliPath, "hook", hookEvent], {
     stdio: ["pipe", "inherit", "inherit"],
-    env: { ...env, PLUGIN_ROOT: resolve(PLUGIN_ROOT, "vendor/lazygrok-hooks", componentName) },
+    env: { ...childEnv, PLUGIN_ROOT: resolve(PLUGIN_ROOT, "vendor/lazygrok-hooks", componentName) },
   });
 
   child.stdin.write(JSON.stringify(codexEvent));

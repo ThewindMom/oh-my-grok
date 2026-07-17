@@ -1538,7 +1538,7 @@ function spawnDaemonProcess(paths) {
   mkdirSync2(dirname2(paths.log), { recursive: true });
   const logFd = openSync2(paths.log, "a");
   try {
-    const cliPath = fileURLToPath(new URL("./cli.js", import.meta.url));
+    const cliPath = require2.resolve("@code-yeongyu/lsp-daemon/dist/cli.js");
     const child = spawn2(execPath, [cliPath, "daemon"], {
       detached: true,
       stdio: ["ignore", logFd, logFd]
