@@ -56,7 +56,7 @@ func TestLazygrokHookComponentsPresent(t *testing.T) {
 	hooksDir := filepath.Join("..", "..", "vendor", "lazygrok-hooks")
 	expected := []string{
 		"bootstrap", "codegraph", "comment-checker", "git-bash",
-		"git-bash-mcp", "lazycodex-executor-verify", "lsp", "lsp-daemon",
+		"git-bash-mcp", "lazygrok-executor-verify", "lsp", "lsp-daemon",
 		"lsp-tools-mcp", "rules", "start-work-continuation", "teammode",
 		"telemetry", "ultrawork", "ulw-loop",
 	}

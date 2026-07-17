@@ -19,7 +19,7 @@ Use a TEAM when EITHER holds:
 - one task still needs exploration, yet its GOAL is already clear - parallel investigation under
   a fixed objective.
 
-Use plain subagents (`$ulw` / `multi_agent_v1.spawn_agent`) - NOT a team - when EITHER holds:
+Use plain subagents (`$ulw` / `spawn_subagent`) - NOT a team - when EITHER holds:
 - the work IS perfectly isolated, so there is no coordination cost worth paying; or
 - the GOAL is still ambiguous, where one mind should resolve direction before any fan-out.
 
@@ -35,7 +35,7 @@ final synthesis and any integration.
 ## Compose by part, ownership, or perspective - not by job title
 
 A team is ALWAYS two or more members - never a single-member team. One worker on an isolated
-job is a subagent (`multi_agent_v1.spawn_agent`), not a team; if you end up with a single member,
+job is a subagent (`spawn_subagent`), not a team; if you end up with a single member,
 either split off a second distinct slice or drop the team and use a subagent.
 
 Compose the team from what you actually KNOW about the work. Ground the split in real knowledge
@@ -73,30 +73,30 @@ subcommand rewrites `guide.md`, so the manual always matches the current team.
 ## Create the team and its threads
 
 1. `init` the team, then `add-member` once per member.
-2. Create a durable thread per member with `codex_app.create_thread` - ALWAYS this tool for every
+2. Create a durable thread per member with `spawn_subagent` - ALWAYS this tool for every
    member, never a spawned agent - titled EXACTLY
-   `[team name] {session name}` (keep this convention strictly). If `codex_app.create_thread`
+   `[team name] {session name}` (keep this convention strictly). If `spawn_subagent`
    accepts a working directory / cwd argument, set it to that member's worktree; otherwise the
-   member's manual tells it to `cd` there first. Use `codex_app.set_thread_title` if the title
+   member's manual tells it to `cd` there first. Use `spawn_subagent` if the title
    did not land at creation.
 3. `bind-thread` to record each thread id (and `--cwd`), then send that member's bootstrap
    trigger (printed by `add-member` / `member-prompt`) as the thread's first message. The trigger
    is short on purpose: it tells the new thread to READ its `guide.md` and `team.json` rather than
    carrying the whole protocol inline.
 
-Every team member is a real Codex thread created with `codex_app.create_thread` - this is strict,
-not a preference. NEVER substitute `multi_agent_v1.spawn_agent`, or any other in-process subagent,
+Every team member is a real Codex thread created with `spawn_subagent` - this is strict,
+not a preference. NEVER substitute `spawn_subagent`, or any other in-process subagent,
 for a team member: a spawned agent is an ephemeral helper that does not show up as a team thread,
 cannot carry the `[team name] {session name}` title, and cannot be inspected, titled, archived, or
-re-opened with the `codex_app.*` thread tools - which defeats the entire point of a durable team.
-A member only counts once you have `bind-thread`-ed it to a real `codex_app.create_thread` thread
+re-opened with the `` thread tools - which defeats the entire point of a durable team.
+A member only counts once you have `bind-thread`-ed it to a real `spawn_subagent` thread
 id. If the thread-creation tool is unavailable, STOP and say so (see Stop rules); do not quietly
 fall back to a spawned agent.
 
 ## Communication
 
-Coordinate with `codex_app.send_message_to_thread` (leader-to-member and peer digests) and inspect
-status with `codex_app.read_thread`. The generated manual already binds members to the hard rules,
+Coordinate with `spawn_subagent` (leader-to-member and peer digests) and inspect
+status with `get_command_or_subagent_output`. The generated manual already binds members to the hard rules,
 so you mostly enforce them: all member-to-member and member-to-leader communication is in English;
 when the END user addresses a member, that member replies in the user's own language. Members
 over-communicate relentlessly - constant, small, lean updates that report every finding, hand-off,
@@ -121,7 +121,7 @@ work is done, or the user no longer wants it, do not leave it lying around - arc
 then delete the team state. A finished team that is never disbanded is a leak.
 
 - `archive` closes the team: notify each active member, copy anything useful into `artifacts/`,
-  archive each member thread with `codex_app.set_thread_archived`, then `archive` flips the team
+  archive each member thread with `kill_command_or_subagent`, then `archive` flips the team
   and all members to archived. If a thread-archive tool is unavailable, record that in the team log
   and tell the user - never pretend a member was archived.
 - `delete` removes `.omo/teams/{session_id}` and refuses while the team is unarchived or any member

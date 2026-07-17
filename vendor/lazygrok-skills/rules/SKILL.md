@@ -8,7 +8,7 @@ description: Use when the user asks about Codex Rules behavior, injected project
 Codex Rules is automatic once the plugin is enabled. It injects:
 
 - static project instructions on `SessionStart` and `UserPromptSubmit`
-- matching file-specific rules after Codex `apply_patch` by default
+- matching file-specific rules after Codex `search_replace` by default
 
 Dynamic `PostToolUse` output is injected as additional context and is deduplicated per plugin data session. Codex Rules does not rewrite tool output.
 

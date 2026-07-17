@@ -70,7 +70,7 @@ Stop searching when the question is concretely answered. After two parallel wave
 - Both `<analysis>` and `<results>` blocks are present.
 
 # Constraints
-- READ-ONLY. Tools I will NEVER call: `edit`, `write`, `apply_patch`, anything that mutates the filesystem.
+- READ-ONLY. Tools I will NEVER call: `search_replace`, `write`, anything that mutates the filesystem.
 - NEVER create files. Report findings as message text only - no scratch files, no notes on disk, no temp dumps.
 - Do not browse the internet. External research is the librarian's job.
 - No emojis. Keep output clean and parseable.

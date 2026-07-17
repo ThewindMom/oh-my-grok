@@ -5,21 +5,21 @@ description: "Execute a Prometheus work plan in Codex with Boulder state, eviden
 
 ## Codex Harness Tool Compatibility
 
-This skill may include examples copied from the OpenCode harness. In Codex, do not call OpenCode-only tools such as `call_omo_agent(...)`, `task(...)`, `background_output(...)`, or `team_*(...)` literally. Translate those examples to Codex native tools:
+This skill may include examples copied from the OpenCode harness. In Codex, do not call OpenCode-only tools such as `spawn_subagent(...)`, `task(...)`, `background_output(...)`, or `team_*(...)` literally. Translate those examples to Codex native tools:
 
 | OpenCode example | Codex tool to use |
 | --- | --- |
-| `call_omo_agent(subagent_type="explore", ...)` | `multi_agent_v1.spawn_agent({"message":"TASK: act as an explorer. ...","agent_type":"explorer","fork_context":false})` |
-| `call_omo_agent(subagent_type="librarian", ...)` | `multi_agent_v1.spawn_agent({"message":"TASK: act as a librarian. ...","agent_type":"librarian","fork_context":false})` |
-| `task(subagent_type="plan", ...)` | `multi_agent_v1.spawn_agent({"message":"TASK: act as a planning agent. ...","agent_type":"plan","fork_context":false})` |
-| `task(subagent_type="oracle", ...)` for final verification | `multi_agent_v1.spawn_agent({"message":"TASK: act as a rigorous reviewer. ...","agent_type":"lazycodex-gate-reviewer","fork_context":false})` |
-| `task(category="...", ...)` for implementation or QA | `multi_agent_v1.spawn_agent({"message":"TASK: act as an implementation or QA worker. ...","fork_context":false})` |
-| `background_output(task_id="...")` | `multi_agent_v1.wait_agent(...)` for mailbox signals |
-| `team_*(...)` | Use Codex native subagents via `multi_agent_v1.spawn_agent`, `multi_agent_v1.send_input`, `multi_agent_v1.wait_agent`, and `multi_agent_v1.close_agent` |
+| `spawn_subagent(subagent_type="explore", ...)` | `spawn_subagent({"message":"TASK: act as an explorer. ...","subagent_type":"explorer","background":true})` |
+| `spawn_subagent(subagent_type="librarian", ...)` | `spawn_subagent({"message":"TASK: act as a librarian. ...","subagent_type":"librarian","background":true})` |
+| `task(subagent_type="plan", ...)` | `spawn_subagent({"message":"TASK: act as a planning agent. ...","subagent_type":"plan","background":true})` |
+| `task(subagent_type="oracle", ...)` for final verification | `spawn_subagent({"message":"TASK: act as a rigorous reviewer. ...","subagent_type":"lazygrok-gate-reviewer","background":true})` |
+| `task(category="...", ...)` for implementation or QA | `spawn_subagent({"message":"TASK: act as an implementation or QA worker. ...","background":true})` |
+| `background_output(task_id="...")` | `get_command_or_subagent_output(...)` for mailbox signals |
+| `team_*(...)` | Use Codex native subagents via `spawn_subagent`, `spawn_subagent`, `get_command_or_subagent_output`, and `kill_command_or_subagent` |
 
-Role-specific behavior must be described in a self-contained `message`. Use `fork_context: false` to start the child with only the initial prompt (no parent history); use `fork_context: true` only when full parent history is truly required. Include any required conversation context, files, diffs, constraints, and requested skill names directly in the spawned agent's `message`. OMO installs these selectable agent roles into `~/.codex/agents/`: `explorer`, `librarian`, `plan`, `momus`, `metis`, `lazycodex-code-reviewer`, `lazycodex-qa-executor`, and `lazycodex-gate-reviewer` - pass the matching name as `agent_type` so the child gets that role's model and instructions. If the spawn tool exposes no `agent_type` parameter, omit it and describe the role inside `message`. If a code block below conflicts with this section, this section wins.
+Role-specific behavior must be described in a self-contained `message`. Use `background: true` to start the child with only the initial prompt (no parent history); use `background: true` only when full parent history is truly required. Include any required conversation context, files, diffs, constraints, and requested skill names directly in the spawned agent's `message`. OMO installs these selectable agent roles into the oh-my-grok plugin agents directory: `explorer`, `librarian`, `plan`, `momus`, `metis`, `lazygrok-code-reviewer`, `lazygrok-qa-executor`, and `lazygrok-gate-reviewer` - pass the matching name as `subagent_type` so the child gets that role's model and instructions. If the spawn tool exposes no `subagent_type` parameter, omit it and describe the role inside `message`. If a code block below conflicts with this section, this section wins.
 
-For work likely to exceed one wait cycle, require the child to send `WORKING: <task> - <current phase>` before long passes and `BLOCKED: <reason>` only when progress stops. A `multi_agent_v1.wait_agent` timeout only means no new mailbox update arrived. Treat a running child as alive. Fallback only when the child is completed without the deliverable, ack-only after followup, explicitly `BLOCKED:`, or no longer running.
+For work likely to exceed one wait cycle, require the child to send `WORKING: <task> - <current phase>` before long passes and `BLOCKED: <reason>` only when progress stops. A `get_command_or_subagent_output` timeout only means no new mailbox update arrived. Treat a running child as alive. Fallback only when the child is completed without the deliverable, ack-only after followup, explicitly `BLOCKED:`, or no longer running.
 
 ## ABSOLUTE RULE: YOU ARE AN ORCHESTRATOR — NEVER THE IMPLEMENTER
 
@@ -27,9 +27,9 @@ For work likely to exceed one wait cycle, require the child to send `WORKING: <t
 
 ## Codex Subagent Reliability
 
-Every `multi_agent_v1.spawn_agent` message is a self-contained executable assignment: `TASK: <imperative assignment>`, then `DELIVERABLE`, `SCOPE`, and `VERIFY`, with role instructions inside `message`. Use `fork_context: false` unless full history is truly required; paste only the context the child needs.
+Every `spawn_subagent` message is a self-contained executable assignment: `TASK: <imperative assignment>`, then `DELIVERABLE`, `SCOPE`, and `VERIFY`, with role instructions inside `message`. Use `background: true` unless full history is truly required; paste only the context the child needs.
 
-Plan and reviewer agents may run for a long time: spawn them in the background, keep doing independent root work, and poll with short `multi_agent_v1.wait_agent` cycles — never a single long blocking wait. A timeout only means no new mailbox update arrived; treat a running child as alive. Require `WORKING: <task> - <current phase>` before long passes and `BLOCKED: <reason>` only when progress stops. Keep the parent visibly alive with active subagent count, names, and latest `WORKING:` phase. Fallback only when the child is completed without the deliverable, ack-only after followup, explicitly `BLOCKED:`, or no longer running — then record inconclusive (never a pass), close if safe, and respawn a smaller `fork_context: false` task with the missing deliverable.
+Plan and reviewer agents may run for a long time: spawn them in the background, keep doing independent root work, and poll with short `get_command_or_subagent_output` cycles — never a single long blocking wait. A timeout only means no new mailbox update arrived; treat a running child as alive. Require `WORKING: <task> - <current phase>` before long passes and `BLOCKED: <reason>` only when progress stops. Keep the parent visibly alive with active subagent count, names, and latest `WORKING:` phase. Fallback only when the child is completed without the deliverable, ack-only after followup, explicitly `BLOCKED:`, or no longer running — then record inconclusive (never a pass), close if safe, and respawn a smaller `background: true` task with the missing deliverable.
 
 # start-work
 
@@ -94,7 +94,7 @@ If `--worktree` is set, verify the path with `git worktree list --porcelain` or 
 3. Ignore nested checkboxes under acceptance criteria, evidence, and definition-of-done sections.
 4. Classify the checkbox tier and record it in its ledger entry. Default is LIGHT — a narrow change inside existing layers. Take HEAVY only on a fact you can point to: a new module / abstraction / domain model; auth, security, or session; an external integration; a DB schema or migration; concurrency or transaction boundaries; a cross-domain refactor; or the plan or user signals care. When unsure, take HEAVY; upgrade and redo skipped gates the moment a HEAVY fact surfaces; never downgrade.
 5. Decompose that checkbox into atomic sub-tasks. Collect every other unchecked checkbox in the same plan wave whose dependencies are met — their lanes execute concurrently.
-6. **DELEGATE EVERYTHING. YOU NEVER IMPLEMENT.** Dispatch ALL independent sub-tasks across those checkboxes in one parallel `multi_agent_v1.spawn_agent` burst; serialize only named dependencies. Verification and checkbox marking stay per-checkbox.
+6. **DELEGATE EVERYTHING. YOU NEVER IMPLEMENT.** Dispatch ALL independent sub-tasks across those checkboxes in one parallel `spawn_subagent` burst; serialize only named dependencies. Verification and checkbox marking stay per-checkbox.
 
 Each sub-task message must include:
 
@@ -149,7 +149,7 @@ A worker done claim is never final: each implementation sub-task returns a `Done
 
 Rules:
 - `confirmed` is the only pass verdict. `false-positive`, `needs-fix`, and `needs-human-review` all block checkbox completion.
-- The verifier must be independent from the executor: use `lazycodex-gate-reviewer`, a scoped `worker` reviewer, or root only when root did not implement or materially rewrite that task.
+- The verifier must be independent from the executor: use `lazygrok-gate-reviewer`, a scoped `worker` reviewer, or root only when root did not implement or materially rewrite that task.
 - A worker done claim must be independently verified before it becomes checkbox completion.
 - On any non-confirmed verdict, append the feedback to the ledger, reset the checkbox work to in-progress, and re-dispatch the executor with the exact failure.
 - The verifier must probe the applicable adversarial keys, including `stale_state`, `dirty_worktree`, and `misleading_success_output`, before allowing `FullyDone`.

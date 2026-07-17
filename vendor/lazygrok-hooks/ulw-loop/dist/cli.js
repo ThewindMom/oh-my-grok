@@ -800,9 +800,9 @@ function clearGoalBlockerFields(goal) {
 
 // components/ulw-loop/src/quality-gate.ts
 var REVIEWER_ROLES = {
-  codeReview: "lazycodex-code-reviewer",
-  manualQa: "lazycodex-qa-executor",
-  gateReview: "lazycodex-gate-reviewer"
+  codeReview: "lazygrok-code-reviewer",
+  manualQa: "lazygrok-qa-executor",
+  gateReview: "lazygrok-gate-reviewer"
 };
 function reviewerRoleField(value, expected, field) {
   const actual = textField(value, field);
@@ -1404,7 +1404,7 @@ function finalSection(plan, goal, isFinal, aggregate) {
     "Final story — run mandatory quality gate before update_goal:",
     "- Run targeted verification for changed behavior.",
     "- Confirm every manualQa artifact path exists and has non-zero size.",
-    "- Spawn final reviewers with fork_context=false: lazycodex-code-reviewer, lazycodex-qa-executor, and lazycodex-gate-reviewer. Include the original brief, goal objectives, desired user-visible outcome, diff, and evidence.",
+    "- Spawn final reviewers with fork_context=false: lazygrok-code-reviewer, lazygrok-qa-executor, and lazygrok-gate-reviewer. Include the original brief, goal objectives, desired user-visible outcome, diff, and evidence.",
     "- Require clean codeReview, manualQa, gateReview, iteration, and criteriaCoverage. criteriaCoverage must summarize originalIntent, desiredOutcome, and userOutcomeReview; counts alone are not approval.",
     "- If any reviewer is blocked/inconclusive or the quality gate is not clean, do not call update_goal. Record blocker work first:",
     `  ${blockerCommand}`,

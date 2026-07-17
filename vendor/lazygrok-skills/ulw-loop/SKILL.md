@@ -25,12 +25,12 @@ This skill is intentionally compact. The full workflow lives in `references/full
 - Every success criterion needs observable evidence from a real surface: a channel (tmux, HTTP, browser, computer-use) or, for CLI- or data-shaped criteria, an auxiliary surface (CLI stdout, DB diff, parsed config dump).
 - Record evidence through the CLI only after cleanup receipts are available.
 - Delegate code edits, test writes, fixes, and QA execution to right-sized Codex subagents when the workflow requires it.
-- Every `multi_agent_v1.spawn_agent` message starts with `TASK:`, then names `DELIVERABLE`, `SCOPE`, and `VERIFY`; put role and specialty instructions inside `message`; use `fork_context: false` unless full history is truly required.
-- Plan and reviewer agents may run for a long time; spawn them in the background, keep doing independent root work, and poll with short `multi_agent_v1.wait_agent` cycles. Never use a single long blocking wait for them.
+- Every `spawn_subagent` message starts with `TASK:`, then names `DELIVERABLE`, `SCOPE`, and `VERIFY`; put role and specialty instructions inside `message`; use `background: true` unless full history is truly required.
+- Plan and reviewer agents may run for a long time; spawn them in the background, keep doing independent root work, and poll with short `get_command_or_subagent_output` cycles. Never use a single long blocking wait for them.
 - For work likely to exceed one wait cycle, require the child to send `WORKING: <task> - <current phase>` before long reading, testing, or review passes, and `BLOCKED: <reason>` only when it cannot progress.
-- Track spawned agent names locally. Use `multi_agent_v1.wait_agent` for mailbox signals, not proof of completion. A timeout only means no new mailbox update arrived. Treat a running child as alive.
+- Track spawned agent names locally. Use `get_command_or_subagent_output` for mailbox signals, not proof of completion. A timeout only means no new mailbox update arrived. Treat a running child as alive.
 - While children run, surface the active subagent count, agent names, and latest `WORKING:` phase.
-- Fallback only when the child is completed without the deliverable, ack-only after followup, explicitly `BLOCKED:`, or no longer running. Then record inconclusive and respawn a smaller `fork_context: false` task with the missing deliverable.
+- Fallback only when the child is completed without the deliverable, ack-only after followup, explicitly `BLOCKED:`, or no longer running. Then record inconclusive and respawn a smaller `background: true` task with the missing deliverable.
 - Use `git-master` for git-tracked edits: inspect recent and touched-path commit history, then commit each verified work unit atomically in the repository's observed language, scope, and message style with only that unit's files staged.
 
 ## Codex Tool Mapping
@@ -39,11 +39,11 @@ The full workflow may mention OpenCode-style orchestration examples. In Codex, t
 
 | Workflow intent | Codex tool |
 | --- | --- |
-| Plan agent | `multi_agent_v1.spawn_agent({"message":"TASK: act as a planning agent. ...","fork_context":false})` |
-| Search/read-only worker | `multi_agent_v1.spawn_agent({"message":"TASK: act as an explorer. ...","fork_context":false})` |
-| Implementation or QA worker | `multi_agent_v1.spawn_agent({"message":"TASK: act as an implementation or QA worker. ...","fork_context":false})` |
-| Final verification reviewer | `multi_agent_v1.spawn_agent({"message":"TASK: act as a rigorous reviewer. ...","fork_context":false})` |
-| Wait for background result | `multi_agent_v1.wait_agent(...)` |
-| Clean up finished worker | `multi_agent_v1.close_agent(...)` |
+| Plan agent | `spawn_subagent({"message":"TASK: act as a planning agent. ...","background":true})` |
+| Search/read-only worker | `spawn_subagent({"message":"TASK: act as an explorer. ...","background":true})` |
+| Implementation or QA worker | `spawn_subagent({"message":"TASK: act as an implementation or QA worker. ...","background":true})` |
+| Final verification reviewer | `spawn_subagent({"message":"TASK: act as a rigorous reviewer. ...","background":true})` |
+| Wait for background result | `get_command_or_subagent_output(...)` |
+| Clean up finished worker | `kill_command_or_subagent(...)` |
 
 When translating `load_skills=[...]`, include the requested skill names in the spawned agent's `message`.

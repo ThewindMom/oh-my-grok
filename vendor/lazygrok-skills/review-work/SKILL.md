@@ -4,32 +4,32 @@ description: "Post-implementation review orchestrator. Launches 5 parallel backg
 ---
 ## Codex Harness Tool Compatibility
 
-This skill may include examples copied from the OpenCode harness. In Codex, do not call OpenCode-only tools such as `call_omo_agent(...)`, `task(...)`, `background_output(...)`, or `team_*(...)` literally. Translate those examples to Codex native tools:
+This skill may include examples copied from the OpenCode harness. In Codex, do not call OpenCode-only tools such as `spawn_subagent(...)`, `task(...)`, `background_output(...)`, or `team_*(...)` literally. Translate those examples to Codex native tools:
 
 | OpenCode example | Codex tool to use |
 | --- | --- |
-| `call_omo_agent(subagent_type="explore", ...)` | `multi_agent_v1.spawn_agent({"message":"TASK: act as an explorer. ...","agent_type":"explorer","fork_context":false})` |
-| `call_omo_agent(subagent_type="librarian", ...)` | `multi_agent_v1.spawn_agent({"message":"TASK: act as a librarian. ...","agent_type":"librarian","fork_context":false})` |
-| `task(subagent_type="plan", ...)` | `multi_agent_v1.spawn_agent({"message":"TASK: act as a planning agent. ...","agent_type":"plan","fork_context":false})` |
-| `task(subagent_type="oracle", ...)` for final verification | `multi_agent_v1.spawn_agent({"message":"TASK: act as a rigorous reviewer. ...","agent_type":"lazycodex-gate-reviewer","fork_context":false})` |
-| `task(category="...", ...)` for implementation or QA | `multi_agent_v1.spawn_agent({"message":"TASK: act as an implementation or QA worker. ...","fork_context":false})` |
-| `background_output(task_id="...")` | `multi_agent_v1.wait_agent(...)` for mailbox signals |
-| `team_*(...)` | Use Codex native subagents via `multi_agent_v1.spawn_agent`, `multi_agent_v1.send_input`, `multi_agent_v1.wait_agent`, and `multi_agent_v1.close_agent` |
+| `spawn_subagent(subagent_type="explore", ...)` | `spawn_subagent({"message":"TASK: act as an explorer. ...","subagent_type":"explorer","background":true})` |
+| `spawn_subagent(subagent_type="librarian", ...)` | `spawn_subagent({"message":"TASK: act as a librarian. ...","subagent_type":"librarian","background":true})` |
+| `task(subagent_type="plan", ...)` | `spawn_subagent({"message":"TASK: act as a planning agent. ...","subagent_type":"plan","background":true})` |
+| `task(subagent_type="oracle", ...)` for final verification | `spawn_subagent({"message":"TASK: act as a rigorous reviewer. ...","subagent_type":"lazygrok-gate-reviewer","background":true})` |
+| `task(category="...", ...)` for implementation or QA | `spawn_subagent({"message":"TASK: act as an implementation or QA worker. ...","background":true})` |
+| `background_output(task_id="...")` | `get_command_or_subagent_output(...)` for mailbox signals |
+| `team_*(...)` | Use Codex native subagents via `spawn_subagent`, `spawn_subagent`, `get_command_or_subagent_output`, and `kill_command_or_subagent` |
 
-Role-specific behavior must be described in a self-contained `message`. Use `fork_context: false` to start the child with only the initial prompt (no parent history); use `fork_context: true` only when full parent history is truly required. Include any required conversation context, files, diffs, constraints, and requested skill names directly in the spawned agent's `message`. OMO installs these selectable agent roles into `~/.codex/agents/`: `explorer`, `librarian`, `plan`, `momus`, `metis`, `lazycodex-code-reviewer`, `lazycodex-qa-executor`, and `lazycodex-gate-reviewer` - pass the matching name as `agent_type` so the child gets that role's model and instructions. If the spawn tool exposes no `agent_type` parameter, omit it and describe the role inside `message`. If a code block below conflicts with this section, this section wins.
+Role-specific behavior must be described in a self-contained `message`. Use `background: true` to start the child with only the initial prompt (no parent history); use `background: true` only when full parent history is truly required. Include any required conversation context, files, diffs, constraints, and requested skill names directly in the spawned agent's `message`. OMO installs these selectable agent roles into the oh-my-grok plugin agents directory: `explorer`, `librarian`, `plan`, `momus`, `metis`, `lazygrok-code-reviewer`, `lazygrok-qa-executor`, and `lazygrok-gate-reviewer` - pass the matching name as `subagent_type` so the child gets that role's model and instructions. If the spawn tool exposes no `subagent_type` parameter, omit it and describe the role inside `message`. If a code block below conflicts with this section, this section wins.
 
-For work likely to exceed one wait cycle, require the child to send `WORKING: <task> - <current phase>` before long passes and `BLOCKED: <reason>` only when progress stops. A `multi_agent_v1.wait_agent` timeout only means no new mailbox update arrived. Treat a running child as alive. Fallback only when the child is completed without the deliverable, ack-only after followup, explicitly `BLOCKED:`, or no longer running.
+For work likely to exceed one wait cycle, require the child to send `WORKING: <task> - <current phase>` before long passes and `BLOCKED: <reason>` only when progress stops. A `get_command_or_subagent_output` timeout only means no new mailbox update arrived. Treat a running child as alive. Fallback only when the child is completed without the deliverable, ack-only after followup, explicitly `BLOCKED:`, or no longer running.
 
 ## Codex Subagent Reliability
 
-Every `multi_agent_v1.spawn_agent` message must be self-contained. Start with
+Every `spawn_subagent` message must be self-contained. Start with
 `TASK: <imperative assignment>`, then name `DELIVERABLE`, `SCOPE`, and
 `VERIFY`. State that it is an executable assignment, not a context
 handoff. Role or specialty instructions belong inside `message`.
-Use `fork_context: false` unless full history is truly
+Use `background: true` unless full history is truly
 required; paste only the review context that worker needs.
 
-Plan and reviewer agents may run for a long time; spawn them in the background, keep doing independent root work, and poll with short `multi_agent_v1.wait_agent` cycles sized to the work. Never use a single long blocking wait for them, and never spin on tiny timeouts as a failure budget.
+Plan and reviewer agents may run for a long time; spawn them in the background, keep doing independent root work, and poll with short `get_command_or_subagent_output` cycles sized to the work. Never use a single long blocking wait for them, and never spin on tiny timeouts as a failure budget.
 
 Treat child status as a progress signal, not a timeout counter. For
 work likely to exceed one wait cycle, require the child to send
@@ -38,13 +38,13 @@ review passes, and `BLOCKED: <reason>` only when it cannot progress.
 While any child is active, keep the parent visibly alive with active
 subagent count, agent names, latest `WORKING:` phase, and whether the
 parent is waiting for mailbox updates. Track spawned agent names
-locally. Use `multi_agent_v1.wait_agent` for mailbox signals, not proof of completion.
+locally. Use `get_command_or_subagent_output` for mailbox signals, not proof of completion.
 A timeout only means no new mailbox update arrived. Treat a running child as alive.
 Fallback only when the child is
 completed without the deliverable, ack-only after followup, explicitly
 `BLOCKED:`, or no longer running. Then mark that review lane
 `INCONCLUSIVE`, do not count it as PASS or approval, close if safe, and
-respawn a smaller `fork_context: false` reviewer with the missing
+respawn a smaller `background: true` reviewer with the missing
 deliverable. Preserve completed lane results immediately. If the retry
 budget is exhausted, keep the lane `INCONCLUSIVE` and still emit a final
 aggregate result.
@@ -541,7 +541,7 @@ After launching all 5 agents in one turn, wait for completions in bounded
 cycles. Do not treat a timeout, ack-only reply, or empty child result as
 a PASS.
 
-As each completes, collect via the Codex mapping above (`multi_agent_v1.wait_agent`,
+As each completes, collect via the Codex mapping above (`get_command_or_subagent_output`,
 then the child's substantive final result). Preserve completed lane
 results immediately; never lose a PASS/FAIL because another lane is
 still running. Store each verdict independently:
@@ -561,7 +561,7 @@ inconclusive and respawn a smaller reviewer/worker for that exact lane.
 If it still remains unfinished after that retry, close the still-running
 agent if safe, keep the lane INCONCLUSIVE, and emit the final aggregate
 review result with the incomplete lane named. Do not spin in repeated
-wait/followup cycles. Do not use `multi_agent_v1.send_input` as an interrupt; queued
+wait/followup cycles. Do not use `spawn_subagent` as an interrupt; queued
 followups are not cancellation.
 
 ---

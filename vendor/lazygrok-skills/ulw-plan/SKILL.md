@@ -34,7 +34,7 @@ Before writing any plan or draft by hand, RUN:
 node "<skill-root>/scripts/scaffold-plan.mjs" <slug> [--clear|--unclear]
 ```
 
-(Replace `<skill-root>` with this skill's own directory; `bun` is an accepted substitute for `node`.) It creates `.omo/drafts/<slug>.md` (your durable, compaction-safe resume point) and `.omo/plans/<slug>.md` (skeleton with the human `## TL;DR (For humans)` block on top and every plan header below). Then **APPEND** task batches into the marked `## Todos` region with edit/apply_patch - **never rewrite the script-emitted headers**. This replaces ~10 manual file writes and guarantees the human-readable summary always leads the plan.
+(Replace `<skill-root>` with this skill's own directory; `bun` is an accepted substitute for `node`.) It creates `.omo/drafts/<slug>.md` (your durable, compaction-safe resume point) and `.omo/plans/<slug>.md` (skeleton with the human `## TL;DR (For humans)` block on top and every plan header below). Then **APPEND** task batches into the marked `## Todos` region with edit/search_replace - **never rewrite the script-emitted headers**. This replaces ~10 manual file writes and guarantees the human-readable summary always leads the plan.
 
 Run it ONCE at plan generation. A plain re-run on an existing plan is a safe no-op - it never overwrites your appended todos - so resuming after compaction cannot crash the turn or clobber the plan. Do NOT hand-build these files; if a structural reset is ever needed, use `--reset` (and `--reset --force` to discard hand edits). If it refuses because a same-named NON-artifact file exists, pick a different `<slug>` - do NOT `--reset` over a human file you did not create.
 
@@ -56,10 +56,10 @@ When exploration is exhausted and the unknowns are answered, record the gate in 
 
 ## Delegation (Codex-native)
 
-Fan out read-only research before deciding. Every spawn names DELIVERABLE / SCOPE / VERIFY inside `message`, states the role inside `message` (and passes `agent_type` as a routing hint - do not assume it alone selected a TOML role), and uses `fork_context: false` unless full parent history is truly required:
+Fan out read-only research before deciding. Every spawn names DELIVERABLE / SCOPE / VERIFY inside `message`, states the role inside `message` (and passes `subagent_type` as a routing hint - do not assume it alone selected a TOML role), and uses `background: true` unless full parent history is truly required:
 
 ```
-multi_agent_v1.spawn_agent({"message":"TASK: act as an explorer. DELIVERABLE: ... SCOPE: ... VERIFY: ...","agent_type":"explorer","fork_context":false})
+spawn_subagent({"message":"TASK: act as an explorer. DELIVERABLE: ... SCOPE: ... VERIFY: ...","subagent_type":"explorer","background":true})
 ```
 
 Roles: `explorer` (internal patterns/conventions/tests), `librarian` (external docs/contracts), `metis` (gap analysis), `momus` (high-accuracy plan review). Full spawn/wait/fallback discipline is in `references/full-workflow.md`.

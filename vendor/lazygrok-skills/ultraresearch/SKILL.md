@@ -5,21 +5,21 @@ description: "Maximum-saturation research orchestration: parallel explore+librar
 
 ## Codex Harness Tool Compatibility
 
-This skill may include examples copied from the OpenCode harness. In Codex, do not call OpenCode-only tools such as `call_omo_agent(...)`, `task(...)`, `background_output(...)`, or `team_*(...)` literally. Translate those examples to Codex native tools:
+This skill may include examples copied from the OpenCode harness. In Codex, do not call OpenCode-only tools such as `spawn_subagent(...)`, `task(...)`, `background_output(...)`, or `team_*(...)` literally. Translate those examples to Codex native tools:
 
 | OpenCode example | Codex tool to use |
 | --- | --- |
-| `call_omo_agent(subagent_type="explore", ...)` | `multi_agent_v1.spawn_agent({"message":"TASK: act as an explorer. ...","agent_type":"explorer","fork_context":false})` |
-| `call_omo_agent(subagent_type="librarian", ...)` | `multi_agent_v1.spawn_agent({"message":"TASK: act as a librarian. ...","agent_type":"librarian","fork_context":false})` |
-| `task(subagent_type="plan", ...)` | `multi_agent_v1.spawn_agent({"message":"TASK: act as a planning agent. ...","agent_type":"plan","fork_context":false})` |
-| `task(subagent_type="oracle", ...)` for final verification | `multi_agent_v1.spawn_agent({"message":"TASK: act as a rigorous reviewer. ...","agent_type":"lazycodex-gate-reviewer","fork_context":false})` |
-| `task(category="...", ...)` for implementation or QA | `multi_agent_v1.spawn_agent({"message":"TASK: act as an implementation or QA worker. ...","fork_context":false})` |
-| `background_output(task_id="...")` | `multi_agent_v1.wait_agent(...)` for mailbox signals |
-| `team_*(...)` | Use Codex native subagents via `multi_agent_v1.spawn_agent`, `multi_agent_v1.send_input`, `multi_agent_v1.wait_agent`, and `multi_agent_v1.close_agent` |
+| `spawn_subagent(subagent_type="explore", ...)` | `spawn_subagent({"message":"TASK: act as an explorer. ...","subagent_type":"explorer","background":true})` |
+| `spawn_subagent(subagent_type="librarian", ...)` | `spawn_subagent({"message":"TASK: act as a librarian. ...","subagent_type":"librarian","background":true})` |
+| `task(subagent_type="plan", ...)` | `spawn_subagent({"message":"TASK: act as a planning agent. ...","subagent_type":"plan","background":true})` |
+| `task(subagent_type="oracle", ...)` for final verification | `spawn_subagent({"message":"TASK: act as a rigorous reviewer. ...","subagent_type":"lazygrok-gate-reviewer","background":true})` |
+| `task(category="...", ...)` for implementation or QA | `spawn_subagent({"message":"TASK: act as an implementation or QA worker. ...","background":true})` |
+| `background_output(task_id="...")` | `get_command_or_subagent_output(...)` for mailbox signals |
+| `team_*(...)` | Use Codex native subagents via `spawn_subagent`, `spawn_subagent`, `get_command_or_subagent_output`, and `kill_command_or_subagent` |
 
-Role-specific behavior must be described in a self-contained `message`. Use `fork_context: false` to start the child with only the initial prompt (no parent history); use `fork_context: true` only when full parent history is truly required. Include any required conversation context, files, diffs, constraints, and requested skill names directly in the spawned agent's `message`. OMO installs these selectable agent roles into `~/.codex/agents/`: `explorer`, `librarian`, `plan`, `momus`, `metis`, `lazycodex-code-reviewer`, `lazycodex-qa-executor`, and `lazycodex-gate-reviewer` - pass the matching name as `agent_type` so the child gets that role's model and instructions. If the spawn tool exposes no `agent_type` parameter, omit it and describe the role inside `message`. If a code block below conflicts with this section, this section wins.
+Role-specific behavior must be described in a self-contained `message`. Use `background: true` to start the child with only the initial prompt (no parent history); use `background: true` only when full parent history is truly required. Include any required conversation context, files, diffs, constraints, and requested skill names directly in the spawned agent's `message`. OMO installs these selectable agent roles into the oh-my-grok plugin agents directory: `explorer`, `librarian`, `plan`, `momus`, `metis`, `lazygrok-code-reviewer`, `lazygrok-qa-executor`, and `lazygrok-gate-reviewer` - pass the matching name as `subagent_type` so the child gets that role's model and instructions. If the spawn tool exposes no `subagent_type` parameter, omit it and describe the role inside `message`. If a code block below conflicts with this section, this section wins.
 
-For work likely to exceed one wait cycle, require the child to send `WORKING: <task> - <current phase>` before long passes and `BLOCKED: <reason>` only when progress stops. A `multi_agent_v1.wait_agent` timeout only means no new mailbox update arrived. Treat a running child as alive. Fallback only when the child is completed without the deliverable, ack-only after followup, explicitly `BLOCKED:`, or no longer running.
+For work likely to exceed one wait cycle, require the child to send `WORKING: <task> - <current phase>` before long passes and `BLOCKED: <reason>` only when progress stops. A `get_command_or_subagent_output` timeout only means no new mailbox update arrived. Treat a running child as alive. Fallback only when the child is completed without the deliverable, ack-only after followup, explicitly `BLOCKED:`, or no longer running.
 
 ---
 
@@ -51,7 +51,7 @@ The research is done when all of these hold:
 
 ## Run the swarm as a cooperating team
 
-Saturation research is the textbook case for a cooperating team, not isolated fire-and-forget workers: a lead one worker surfaces almost always reshapes what another should search next. So when your harness gives you real cooperating members — Codex: the `teammode` skill (`codex_app` threads); OpenCode: `team_mode` — run this swarm as a team. Fall back to the background-worker swarm below only when team mode is unavailable, or the axes are genuinely independent with no cross-pollination expected.
+Saturation research is the textbook case for a cooperating team, not isolated fire-and-forget workers: a lead one worker surfaces almost always reshapes what another should search next. So when your harness gives you real cooperating members — Codex: the `teammode` skill (`spawn_subagent` threads); OpenCode: `team_mode` — run this swarm as a team. Fall back to the background-worker swarm below only when team mode is unavailable, or the axes are genuinely independent with no cross-pollination expected.
 
 - **One member per axis — by part, ownership, or perspective, never a job title.** Each Phase 0 axis is one member owning one concrete slice: a codebase part, a source territory, or a question lens. No two members share an angle. "Backend researcher" or "the web person" gives no real boundary and invites overlap — name what the member owns.
 - **The raise law — broadcast every lead the instant it surfaces.** Members over-communicate relentlessly: every new lead, finding, contradiction, and dead end is raised to you the moment it surfaces, never hoarded for a final dump. Through long passes they send `WORKING: <axis> - <phase>`, and `BLOCKED: <reason>` the moment progress stops, so you always know a member is alive. Too many small updates is correct here; going quiet is the only failure.

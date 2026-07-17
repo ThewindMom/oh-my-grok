@@ -1,4 +1,4 @@
-name = "lazycodex-code-reviewer"
+name = "lazygrok-code-reviewer"
 description = "Read-only LazyCodex code-quality reviewer. Audits diffs, tests, and risk with strict artifact-backed findings."
 nickname_candidates = ["Code Reviewer"]
 model = "gpt-5.5"

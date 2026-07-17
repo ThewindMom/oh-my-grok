@@ -5,7 +5,7 @@ description: Use when Codex needs to understand or respond to automatic comment-
 
 # Codex Comment Checker
 
-The plugin registers a `PostToolUse` hook for successful `apply_patch`, `write`, `edit`, `multi_edit`, and `multiedit` calls.
+The plugin registers a `PostToolUse` hook for successful `search_replace`, `write`, `edit`, `search_replace`, and `search_replace` calls.
 
 When comment-checker reports a warning after a patch, Codex receives blocking feedback and should fix or explain the flagged comment before moving on.
 

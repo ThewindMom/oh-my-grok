@@ -335,7 +335,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/lazycodex-executor-verify/dist/cli.js\" hook subagent-stop",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/lazygrok-executor-verify/dist/cli.js\" hook subagent-stop",
             "timeout": 10,
             "statusMessage": "(OmO) Verifying LazyCodex Executor Evidence"
           }
