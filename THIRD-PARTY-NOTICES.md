@@ -49,6 +49,52 @@ under other licenses. This file preserves the notices required by each.
 
 ---
 
+## 5. oh-my-openagent MIT-licensed skills and agents
+
+The following components are from the oh-my-openagent repository and are
+MIT-licensed by Yeongyu Kim. Each carries its own LICENSE file.
+
+- **Upstream**: https://github.com/code-yeongyu/oh-my-openagent
+- **Source commit**: 48c58e63465ca214b0dcc7f2ef92016f052e9a44
+- **License**: MIT — `vendor/omo-skills/*/LICENSE`
+- **Copyright**: (c) 2026 Yeongyu Kim
+
+### Skills copied (MIT):
+
+| Skill | Path |
+|-------|------|
+| ast-grep | `vendor/omo-skills/ast-grep/` |
+| lsp | `vendor/omo-skills/lsp/` |
+| comment-checker | `vendor/omo-skills/comment-checker/` |
+| ulw-plan | `vendor/omo-skills/ulw-plan/` |
+| ulw-loop | `vendor/omo-skills/ulw-loop/` |
+| rules | `vendor/omo-skills/rules/` |
+| init-deep | `vendor/omo-skills/init-deep/` |
+| teammode | `vendor/omo-skills/teammode/` |
+
+### Skill copied (Apache-2.0):
+
+| Skill | Path |
+|-------|------|
+| frontend | `vendor/omo-skills/frontend/` |
+
+### Agent definitions copied (MIT, TOML format):
+
+| Agent | Path |
+|-------|------|
+| librarian | `vendor/omo-agents/librarian.toml` |
+| explorer | `vendor/omo-agents/explorer.toml` |
+| momus | `vendor/omo-agents/momus.toml` |
+| metis | `vendor/omo-agents/metis.toml` |
+| plan | `vendor/omo-agents/plan.toml` |
+| lazycodex-executor | `vendor/omo-agents/lazycodex-executor.toml` |
+| lazycodex-code-reviewer | `vendor/omo-agents/lazycodex-code-reviewer.toml` |
+| lazycodex-qa-executor | `vendor/omo-agents/lazycodex-qa-executor.toml` |
+| lazycodex-gate-reviewer | `vendor/omo-agents/lazycodex-gate-reviewer.toml` |
+| lazycodex-clone-fidelity-reviewer | `vendor/omo-agents/lazycodex-clone-fidelity-reviewer.toml` |
+
+---
+
 ## Removed components
 
 The following were present in earlier releases and have been removed for
