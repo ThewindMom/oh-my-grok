@@ -1,9 +1,9 @@
 ---
 name: lsp
-description: Use when Codex needs language-server diagnostics, definitions, references, symbols, or rename safety checks in the current workspace.
+description: Use when Grok needs language-server diagnostics, definitions, references, symbols, or rename safety checks in the current workspace.
 ---
 
-# Codex LSP
+# Grok LSP
 
 Call `lsp` MCP tools through the tool interface; `lsp.*`/`mcp__lsp__*` are tool-call names, not shell commands.
 
@@ -19,7 +19,7 @@ Call `lsp` MCP tools through the tool interface; `lsp.*`/`mcp__lsp__*` are tool-
 
 ## Config
 
-Project config lives at `.codex/lsp-client.json`; user config lives at `~/.codex/lsp-client.json`.
+Project config lives at `.omg/lsp-config.json`; user config lives at `~/.grok/lsp-config.json`.
 
 ```json
 {

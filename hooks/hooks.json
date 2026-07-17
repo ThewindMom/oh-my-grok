@@ -9,6 +9,16 @@
             "timeout": 30
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/rules/dist/cli.js\" hook session-start",
+            "timeout": 10,
+            "statusMessage": "(OmO) Loading Project Rules"
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
@@ -20,16 +30,68 @@
             "timeout": 20
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/ultrawork/dist/cli.js\" hook user-prompt-submit",
+            "timeout": 5,
+            "statusMessage": "(OmO) Checking Ultrawork Trigger"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/ulw-loop/dist/cli.js\" hook user-prompt-submit",
+            "timeout": 10,
+            "statusMessage": "(OmO) Checking Ulw-Loop Steering"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/rules/dist/cli.js\" hook user-prompt-submit",
+            "timeout": 10,
+            "statusMessage": "(OmO) Loading Project Rules"
+          }
+        ]
       }
     ],
     "PreToolUse": [
       {
-        "matcher": "Write|StrReplace|EditNotebook|Delete|search_replace",
+        "matcher": "Write|StrReplace|EditNotebook|Delete|search_replace|write",
         "hooks": [
           {
             "type": "command",
             "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" pre-tool-use",
             "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "^run_terminal_command$|^Bash$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/git-bash/dist/cli.js\" hook pre-tool-use",
+            "timeout": 5,
+            "statusMessage": "(OmO) Recommending Git Bash MCP"
+          }
+        ]
+      },
+      {
+        "matcher": "^update_goal$|^create_goal$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/ulw-loop/dist/cli.js\" hook pre-tool-use",
+            "timeout": 5,
+            "statusMessage": "(OmO) Enforcing Unlimited Ulw-Loop Budget"
           }
         ]
       }
@@ -56,7 +118,7 @@
         ]
       },
       {
-        "matcher": "Write|StrReplace|search_replace",
+        "matcher": "Write|StrReplace|search_replace|write",
         "hooks": [
           {
             "type": "command",
@@ -66,12 +128,45 @@
         ]
       },
       {
-        "matcher": "Write|StrReplace|search_replace",
+        "matcher": "Write|StrReplace|search_replace|write",
         "hooks": [
           {
             "type": "command",
             "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" post-tool-comment-check",
             "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "Write|StrReplace|search_replace|write|apply_patch|edit|multi_edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/comment-checker/dist/cli.js\" hook post-tool-use",
+            "timeout": 30,
+            "statusMessage": "(OmO) Checking Comments"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|StrReplace|search_replace|write|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/rules/dist/cli.js\" hook post-tool-use",
+            "timeout": 10,
+            "statusMessage": "(OmO) Matching Project Rules"
+          }
+        ]
+      },
+      {
+        "matcher": "create_thread|codex_app\\.create_thread",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/teammode/dist/cli.js\" hook post-tool-use",
+            "timeout": 10,
+            "statusMessage": "(OmO) Checking Thread Title Hygiene"
           }
         ]
       }
@@ -105,6 +200,16 @@
             "type": "command",
             "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" stop",
             "timeout": 15
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/start-work-continuation/dist/cli.js\" hook stop",
+            "timeout": 10,
+            "statusMessage": "(OmO) Checking Start-Work Continuation"
           }
         ]
       }
@@ -151,6 +256,27 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/start-work-continuation/dist/cli.js\" hook subagent-stop",
+            "timeout": 10,
+            "statusMessage": "(OmO) Checking Start-Work Continuation"
+          }
+        ]
+      },
+      {
+        "matcher": "^lazycodex-executor$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/lazycodex-executor-verify/dist/cli.js\" hook subagent-stop",
+            "timeout": 10,
+            "statusMessage": "(OmO) Verifying LazyCodex Executor Evidence"
+          }
+        ]
       }
     ],
     "PreCompact": [
@@ -171,6 +297,27 @@
             "type": "command",
             "command": "bash \"${GROK_PLUGIN_ROOT}/hooks/run-hook.sh\" post-compact",
             "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/rules/dist/cli.js\" hook post-compact",
+            "timeout": 10,
+            "statusMessage": "(OmO) Resetting Project Rule Cache"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/git-bash/dist/cli.js\" hook post-compact",
+            "timeout": 5,
+            "statusMessage": "(OmO) Resetting Git Bash MCP Reminder"
           }
         ]
       }

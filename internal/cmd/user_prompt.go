@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/mihazs/oh-my-grok/internal/boulder"
+	"github.com/mihazs/oh-my-grok/internal/core/config"
+	"github.com/mihazs/oh-my-grok/internal/core/continuation"
 	"github.com/mihazs/oh-my-grok/internal/handoff"
 	"github.com/mihazs/oh-my-grok/internal/hashline"
 	"github.com/mihazs/oh-my-grok/internal/hookenv"
@@ -44,6 +46,7 @@ func userPromptCmd() *cobra.Command {
 				lsp.CollectContext(sid),
 				hashline.CollectContext(sid),
 				skillgate.BuildReminder(sid),
+				collectContinuation(ws, sid),
 			}
 			merged := mergeNonEmpty(parts...)
 			if merged == "" {
@@ -69,4 +72,25 @@ func mergeNonEmpty(parts ...string) string {
 		}
 	}
 	return merged
+}
+
+// collectContinuation evaluates the continuation stop pipeline and, when an
+// active loop should continue, returns the continuation message to inject as
+// additional context on UserPromptSubmit. Returns an empty string when no
+// continuation is active, continuation is disabled, or the loop is explicitly
+// stopped.
+func collectContinuation(ws, sid string) string {
+	if ws == "" || sid == "" {
+		return ""
+	}
+	gh := hookenv.GrokHome()
+	cfg, err := config.Load(ws, gh)
+	if err != nil {
+		cfg = config.Defaults()
+	}
+	result := continuation.EvaluateStop(ws, gh, sid, cfg)
+	if !result.ShouldContinue || result.Message == "" {
+		return ""
+	}
+	return result.Message
 }

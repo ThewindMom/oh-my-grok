@@ -1,9 +1,13 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/mihazs/oh-my-grok/internal/boulder"
+	coreboulder "github.com/mihazs/oh-my-grok/internal/core/boulder"
+	"github.com/mihazs/oh-my-grok/internal/core/config"
+	"github.com/mihazs/oh-my-grok/internal/core/continuation"
 	"github.com/mihazs/oh-my-grok/internal/hookenv"
 	"github.com/mihazs/oh-my-grok/internal/hookio"
 	"github.com/mihazs/oh-my-grok/internal/lsp"
@@ -23,13 +27,42 @@ func stopCmd() *cobra.Command {
 			hookenv.ApplyEvent(ev)
 			w := os.Stdout
 
+			ws := workspace(ev)
+			sid := sessionID(ev)
+			gh := hookenv.GrokHome()
+
+			// --- NEW core pipeline (tried first) ---
+
+			// 1. core/continuation: bounded loops, cooldowns, repeated-state detection
+			if cfg, err := config.Load(ws, gh); err == nil {
+				if result := continuation.EvaluateStop(ws, gh, sid, cfg); result.ShouldContinue {
+					hookio.EmitStopBlock(w, result.Message)
+					os.Exit(0)
+				}
+			} else {
+				fmt.Fprintf(os.Stderr, "omg-hook: config load failed: %v\n", err)
+			}
+
+			// 2. core/boulder: active work record with incomplete tasks
+			if bs, err := coreboulder.Load(ws); err == nil {
+				if wr := bs.GetActiveWork(); wr != nil && wr.Status == coreboulder.WorkActive && !wr.IsComplete() {
+					completed, total := wr.TaskProgress()
+					msg := fmt.Sprintf(
+						"[BOULDER] Active work record %q has incomplete tasks (%d/%d complete).\nObjective: %s\nContinue working until all tasks are complete.",
+						wr.ID, completed, total, wr.Objective,
+					)
+					hookio.EmitStopBlock(w, msg)
+					os.Exit(0)
+				}
+			}
+
+			// --- LEGACY pipeline (kept for backward compatibility) ---
+
 			if block, msg := ralph.EvaluateStop(ev); block {
 				hookio.EmitStopBlock(w, msg)
 				os.Exit(0)
 			}
 
-			ws := workspace(ev)
-			sid := sessionID(ev)
 			if !boulder.AutoContinuePaused(ws, sid) {
 				if block, msg := boulder.EvaluateBoulderStop(ev); block {
 					hookio.EmitStopBlock(w, msg)

@@ -1,21 +1,22 @@
 ---
 name: rules
-description: Use when the user asks about Codex Rules behavior, injected project rules, supported rule file locations, matching, or environment configuration.
+description: Use when the user asks about Grok Rules behavior, injected project rules, supported rule file locations, matching, or environment configuration.
 ---
 
-# Codex Rules
+# Grok Rules
 
-Codex Rules is automatic once the plugin is enabled. It injects:
+Grok Rules is automatic once the plugin is enabled. It injects:
 
 - static project instructions on `SessionStart` and `UserPromptSubmit`
-- matching file-specific rules after Codex `apply_patch` by default
+- matching file-specific rules after Grok `apply_patch` by default
 
-Dynamic `PostToolUse` output is injected as additional context and is deduplicated per plugin data session. Codex Rules does not rewrite tool output.
+Dynamic `PostToolUse` output is injected as additional context and is deduplicated per plugin data session. Grok Rules does not rewrite tool output.
 
 Supported project sources:
 
 - `CONTEXT.md`
-- `.omo/rules/**/*.md`
+- `.omg/rules/**/*.md`
+- `.grok/rules/**/*.md`
 - `.claude/rules/**/*.md`
 - `.cursor/rules/**/*.md`
 - `.github/instructions/**/*.md`
@@ -23,10 +24,10 @@ Supported project sources:
 
 Supported environment knobs:
 
-- `CODEX_RULES_DISABLED=1`
-- `CODEX_RULES_MODE=both|static|dynamic|off`
-- `CODEX_RULES_MAX_RULE_CHARS=<number>`
-- `CODEX_RULES_MAX_RESULT_CHARS=<number>`
-- `CODEX_RULES_ENABLED_SOURCES=CONTEXT.md,.omo/rules`
+- `GROK_RULES_DISABLED=1`
+- `GROK_RULES_MODE=both|static|dynamic|off`
+- `GROK_RULES_MAX_RULE_CHARS=<number>`
+- `GROK_RULES_MAX_RESULT_CHARS=<number>`
+- `GROK_RULES_ENABLED_SOURCES=CONTEXT.md,.omg/rules`
 
 The legacy `PI_RULES_*` variables are accepted as fallbacks for users migrating from `pi-rules`.

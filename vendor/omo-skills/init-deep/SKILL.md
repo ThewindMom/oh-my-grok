@@ -2,23 +2,25 @@
 name: init-deep
 description: "(builtin) Initialize hierarchical AGENTS.md knowledge base"
 ---
-## Codex Harness Tool Compatibility
+## Grok Harness Tool Compatibility
 
-This skill may include examples copied from the OpenCode harness. In Codex, do not call OpenCode-only tools such as `call_omo_agent(...)`, `task(...)`, `background_output(...)`, or `team_*(...)` literally. Translate those examples to Codex native tools:
+This skill may include examples copied from the OpenCode harness. In Grok, do not call OpenCode-only tools such as `call_omo_agent(...)`, `task(...)`, `background_output(...)`, or `team_*(...)` literally. Translate those examples to Grok native tools:
 
-| OpenCode example | Codex tool to use |
+| OpenCode example | Grok tool to use |
 | --- | --- |
-| `call_omo_agent(subagent_type="explore", ...)` | `multi_agent_v1.spawn_agent({"message":"TASK: act as an explorer. ...","agent_type":"explorer","fork_context":false})` |
-| `call_omo_agent(subagent_type="librarian", ...)` | `multi_agent_v1.spawn_agent({"message":"TASK: act as a librarian. ...","agent_type":"librarian","fork_context":false})` |
-| `task(subagent_type="plan", ...)` | `multi_agent_v1.spawn_agent({"message":"TASK: act as a planning agent. ...","agent_type":"plan","fork_context":false})` |
-| `task(subagent_type="oracle", ...)` for final verification | `multi_agent_v1.spawn_agent({"message":"TASK: act as a rigorous reviewer. ...","agent_type":"lazycodex-gate-reviewer","fork_context":false})` |
-| `task(category="...", ...)` for implementation or QA | `multi_agent_v1.spawn_agent({"message":"TASK: act as an implementation or QA worker. ...","fork_context":false})` |
-| `background_output(task_id="...")` | `multi_agent_v1.wait_agent(...)` for mailbox signals |
-| `team_*(...)` | Use Codex native subagents via `multi_agent_v1.spawn_agent`, `multi_agent_v1.send_input`, `multi_agent_v1.wait_agent`, and `multi_agent_v1.close_agent` |
+| `call_omo_agent(subagent_type="explore", ...)` | `spawn_subagent(subagent_type="oh-my-grok:explore", background=true, prompt="TASK: act as an explorer. ...")` |
+| `call_omo_agent(subagent_type="librarian", ...)` | `spawn_subagent(subagent_type="oh-my-grok:librarian", background=true, prompt="TASK: act as a librarian. ...")` |
+| `task(subagent_type="plan", ...)` | `spawn_subagent(subagent_type="oh-my-grok:prometheus", background=true, prompt="TASK: act as a planning agent. ...")` |
+| `task(subagent_type="oracle", ...)` for final verification | `spawn_subagent(subagent_type="oh-my-grok:momus", background=true, prompt="TASK: act as a rigorous reviewer. ...")` |
+| `task(category="...", ...)` for implementation or QA | `spawn_subagent(subagent_type="oh-my-grok:hephaestus", background=true, prompt="TASK: act as an implementation or QA worker. ...")` |
+| `background_output(task_id="...")` | `get_command_or_subagent_output(task_ids=["..."])` |
+| `background_cancel(taskId="...")` | `kill_command_or_subagent(task_id="...")` |
+| `task(task_id="ses_...")` | `spawn_subagent(subagent_type="...", resume_from="...")` |
+| `team_*(...)` | Use Grok native subagents via `spawn_subagent` with `background: true`, then `get_command_or_subagent_output` and `kill_command_or_subagent` |
 
-Role-specific behavior must be described in a self-contained `message`. Use `fork_context: false` to start the child with only the initial prompt (no parent history); use `fork_context: true` only when full parent history is truly required. Include any required conversation context, files, diffs, constraints, and requested skill names directly in the spawned agent's `message`. OMO installs these selectable agent roles into `~/.codex/agents/`: `explorer`, `librarian`, `plan`, `momus`, `metis`, `lazycodex-code-reviewer`, `lazycodex-qa-executor`, and `lazycodex-gate-reviewer` - pass the matching name as `agent_type` so the child gets that role's model and instructions. If the spawn tool exposes no `agent_type` parameter, omit it and describe the role inside `message`. If a code block below conflicts with this section, this section wins.
+Role-specific behavior must be described in a self-contained `prompt`. The child starts with only the prompt (no parent history); there is no fork-context concept in Grok. Include any required conversation context, files, diffs, constraints, and requested skill names directly in the spawned agent's `prompt`. oh-my-grok installs these selectable agent roles into `~/.grok/agents/`: `explore`, `librarian`, `prometheus`, `momus`, `metis`, `hephaestus`, `oracle`, and `atlas` - pass the matching name as `subagent_type` (e.g. `oh-my-grok:explore`) so the child gets that role's model and instructions. If the spawn tool exposes no `subagent_type` parameter, omit it and describe the role inside `prompt`. If a code block below conflicts with this section, this section wins.
 
-For work likely to exceed one wait cycle, require the child to send `WORKING: <task> - <current phase>` before long passes and `BLOCKED: <reason>` only when progress stops. A `multi_agent_v1.wait_agent` timeout only means no new mailbox update arrived. Treat a running child as alive. Fallback only when the child is completed without the deliverable, ack-only after followup, explicitly `BLOCKED:`, or no longer running.
+For work likely to exceed one wait cycle, require the child to send `WORKING: <task> - <current phase>` before long passes and `BLOCKED: <reason>` only when progress stops. A `get_command_or_subagent_output` timeout only means no new output arrived. Treat a running child as alive. Fallback only when the child is completed without the deliverable, ack-only after followup, explicitly `BLOCKED:`, or no longer running.
 
 # /init-deep
 
@@ -67,12 +69,12 @@ Don't wait-these run async while main session works. **Equip every agent with th
 
 ```
 // Fire all at once, collect results later
-task(subagent_type="explore", load_skills=[], description="Explore project structure", run_in_background=true, prompt="Project structure: map real layout via codegraph_explore/codegraph_files → REPORT deviations from standard patterns")
-task(subagent_type="explore", load_skills=[], description="Find entry points", run_in_background=true, prompt="Entry points: FIND main files, trace reach via codegraph_callees + lsp_symbols → REPORT non-standard organization")
-task(subagent_type="explore", load_skills=[], description="Find conventions", run_in_background=true, prompt="Conventions: FIND config files (.eslintrc, pyproject.toml, .editorconfig) → REPORT project-specific rules")
-task(subagent_type="explore", load_skills=[], description="Find anti-patterns", run_in_background=true, prompt="Anti-patterns: FIND 'DO NOT', 'NEVER', 'ALWAYS', 'DEPRECATED' comments → LIST forbidden patterns")
-task(subagent_type="explore", load_skills=[], description="Explore build/CI", run_in_background=true, prompt="Build/CI: FIND .github/workflows, Makefile → REPORT non-standard patterns")
-task(subagent_type="explore", load_skills=[], description="Find test patterns", run_in_background=true, prompt="Test patterns: FIND test configs/structure; codegraph_callers on core modules to see what is covered → REPORT unique conventions")
+spawn_subagent(subagent_type="oh-my-grok:explore", background=true, prompt="TASK: Explore project structure. DELIVERABLE: layout map. SCOPE: codegraph_explore/codegraph_files. VERIFY: REPORT deviations from standard patterns")
+spawn_subagent(subagent_type="oh-my-grok:explore", background=true, prompt="TASK: Find entry points. DELIVERABLE: entry point list. SCOPE: codegraph_callees + lsp_symbols. VERIFY: REPORT non-standard organization")
+spawn_subagent(subagent_type="oh-my-grok:explore", background=true, prompt="TASK: Find conventions. DELIVERABLE: config file list. SCOPE: config files (.eslintrc, pyproject.toml, .editorconfig). VERIFY: REPORT project-specific rules")
+spawn_subagent(subagent_type="oh-my-grok:explore", background=true, prompt="TASK: Find anti-patterns. DELIVERABLE: forbidden pattern list. SCOPE: 'DO NOT', 'NEVER', 'ALWAYS', 'DEPRECATED' comments. VERIFY: LIST forbidden patterns")
+spawn_subagent(subagent_type="oh-my-grok:explore", background=true, prompt="TASK: Explore build/CI. DELIVERABLE: build/CI map. SCOPE: .github/workflows, Makefile. VERIFY: REPORT non-standard patterns")
+spawn_subagent(subagent_type="oh-my-grok:explore", background=true, prompt="TASK: Find test patterns. DELIVERABLE: test convention report. SCOPE: test configs/structure; codegraph_callers on core modules. VERIFY: REPORT unique conventions")
 ```
 
 <dynamic-agents>
@@ -98,9 +100,9 @@ max_depth=$(find . -type d -not -path '*/node_modules/*' -not -path '*/.git/*' |
 Example spawning:
 ```
 // 500 files, 50k lines, depth 6, 15 large files → spawn 5+5+2+1 = 13 additional agents
-task(subagent_type="explore", load_skills=[], description="Analyze large files", run_in_background=true, prompt="Large file analysis: FIND files >500 lines, REPORT complexity hotspots")
-task(subagent_type="explore", load_skills=[], description="Explore deep modules", run_in_background=true, prompt="Deep modules at depth 4+: FIND hidden patterns, internal conventions")
-task(subagent_type="explore", load_skills=[], description="Find shared utilities", run_in_background=true, prompt="Cross-cutting concerns: FIND shared utilities across directories")
+spawn_subagent(subagent_type="oh-my-grok:explore", background=true, prompt="TASK: Analyze large files. DELIVERABLE: complexity hotspot report. SCOPE: files >500 lines. VERIFY: REPORT hotspots")
+spawn_subagent(subagent_type="oh-my-grok:explore", background=true, prompt="TASK: Explore deep modules. DELIVERABLE: hidden pattern report. SCOPE: modules at depth 4+. VERIFY: FIND hidden patterns, internal conventions")
+spawn_subagent(subagent_type="oh-my-grok:explore", background=true, prompt="TASK: Find shared utilities. DELIVERABLE: cross-cutting concern list. SCOPE: shared utilities across directories. VERIFY: FIND shared utilities")
 // ... more based on calculation
 ```
 </dynamic-agents>
@@ -152,7 +154,7 @@ Only if NEITHER exists: explore agents + the ast-grep skill (`sg`), and mark cen
 
 ```
 // After main session analysis done, collect all task results
-for each background task ID (`bg_...`): background_output(task_id="bg_...")
+for each background task ID: get_command_or_subagent_output(task_ids=["<task_id>"])
 ```
 
 **Merge: bash + LSP/codegraph + existing + explore findings. Mark "discovery" as completed.**
@@ -262,11 +264,11 @@ Launch writing tasks for each location:
 
 ```
 for loc in AGENTS_LOCATIONS (except root):
-  task(category="writing", load_skills=[], run_in_background=false, description="Generate AGENTS.md", prompt=`
-    Generate AGENTS.md for: ${loc.path}
-    - Reason: ${loc.reason}
-    - 30-80 lines max
-    - NEVER repeat parent content
+  spawn_subagent(subagent_type="oh-my-grok:hephaestus", background=false, prompt=`
+    TASK: Generate AGENTS.md for: ${loc.path}
+    DELIVERABLE: AGENTS.md file at ${loc.path}
+    SCOPE: ${loc.reason}
+    VERIFY: 30-80 lines max, NEVER repeat parent content
     - Sections: OVERVIEW (1 line), STRUCTURE (if >5 subdirs), WHERE TO LOOK, CONVENTIONS (if different), ANTI-PATTERNS
   `)
 ```

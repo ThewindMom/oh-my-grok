@@ -1,14 +1,22 @@
 ---
 name: teammode
-description: "Codex-only team orchestration: run a named team of cooperating Codex threads with durable, script-managed state. MUST USE when the user asks Codex to create, run, coordinate, inspect, archive, or delete a team of threads/sessions, or to work on something as a team in parallel. The main session is always the leader; members are defined by a concrete part, ownership area, or perspective - never a vague job role; a bundled cross-platform script writes the .omo/teams state plus an auto-generated member field manual. Use a team when the work is not perfectly isolated but parallelizing helps, or when a task still needs exploration under a clear goal; use plain subagents when scope is perfectly isolated or the goal is ambiguous. Triggers: team mode, teammode, make a team, run as a team, team of agents, coordinate threads, parallel Codex threads, archive the team, delete the team."
+description: "Team orchestration: run a named team of cooperating Grok subagents with durable, script-managed state. MUST USE when the user asks Grok to create, run, coordinate, inspect, archive, or delete a team of subagents/sessions, or to work on something as a team in parallel. The main session is always the leader; members are defined by a concrete part, ownership area, or perspective - never a vague job role; a bundled cross-platform script writes the .omg/teams state plus an auto-generated member field manual. Use a team when the work is not perfectly isolated but parallelizing helps, or when a task still needs exploration under a clear goal; use plain subagents when scope is perfectly isolated or the goal is ambiguous. Triggers: team mode, teammode, make a team, run as a team, team of agents, coordinate subagents, parallel subagents, archive the team, delete the team."
 ---
 
 # Teammode
 
-Run a named team of cooperating Codex threads under one leader, with durable state on disk.
-This is a Codex-only workflow. It is inspired by the lifecycle concerns in the
+> **Note: Codex concept, adapted for Grok.** This skill originates from a Codex-centric model of
+> durable "threads". Grok has no first-class thread concept; parallel work in Grok is done via
+> `spawn_subagent` with `background: true`, then collecting results with
+> `get_command_or_subagent_output(task_ids=[...])` and tearing down with
+> `kill_command_or_subagent(task_id="...")`. The orchestration concepts below (leader, members,
+> worktrees, durable state on disk) still apply, but each "member" is a backgrounded Grok
+> subagent rather than a Codex thread.
+
+Run a named team of cooperating Grok subagents under one leader, with durable state on disk.
+This workflow is inspired by the lifecycle concerns in the
 Yeachan-Heo/oh-my-codex team skill, but it does not copy that runtime model and never depends
-on an external terminal runner - it coordinates through Codex's own thread tools plus a bundled
+on an external terminal runner - it coordinates through Grok's own `spawn_subagent` tool plus a bundled
 state script.
 
 ## When to use a team (and when to use plain subagents instead)
@@ -19,7 +27,7 @@ Use a TEAM when EITHER holds:
 - one task still needs exploration, yet its GOAL is already clear - parallel investigation under
   a fixed objective.
 
-Use plain subagents (`$ulw` / `multi_agent_v1.spawn_agent`) - NOT a team - when EITHER holds:
+Use plain subagents (`$ulw` / `spawn_subagent` with `background: true`) - NOT a team - when EITHER holds:
 - the work IS perfectly isolated, so there is no coordination cost worth paying; or
 - the GOAL is still ambiguous, where one mind should resolve direction before any fan-out.
 
@@ -39,7 +47,7 @@ merge), not the keystrokes.
 ## Compose by part, ownership, or perspective - not by job title
 
 A team is ALWAYS two or more members - never a single-member team. One worker on an isolated
-job is a subagent (`multi_agent_v1.spawn_agent`), not a team; if you end up with a single member,
+job is a subagent (`spawn_subagent` with `background: true`), not a team; if you end up with a single member,
 either split off a second distinct slice or drop the team and use a subagent.
 
 Compose the team from what you actually KNOW about the work. Ground the split in real knowledge
@@ -50,7 +58,7 @@ perspective/lens. Assigning a vague role ("backend dev", "release analyst", "the
 anti-pattern - it gives the member no real boundary and invites overlap. Each member's `focus`
 names what they own concretely; the `lens` is one of `area`, `ownership`, or `perspective`.
 Give each member a short, distinct `--name` too - its role or what it watches (e.g.
-`app-server-lifecycle`, `mailbox-delivery`) - because that name titles its thread; never reuse
+`app-server-lifecycle`, `mailbox-delivery`) - because that name titles its subagent; never reuse
 one name for two members.
 
 ## Run the script - never hand-write team state
@@ -73,42 +81,43 @@ node "<skill-root>/scripts/team.mjs" delete       --team <session_id> [--force]
 node "<skill-root>/scripts/team.mjs" status       --team <session_id>
 ```
 
-`init` creates `.omo/teams/{session_id}/` containing `team.json` (the single durable state file:
+`init` creates `.omg/teams/{session_id}/` containing `team.json` (the single durable state file:
 team id, the main-session leader, the member roster, status, worktree config, and a lifecycle
 log), `guide.md` (the auto-generated member field manual), and `artifacts/` (a shared exchange
-space). `{session_id}` is the leader's Codex session id when you can pass it via `--session`;
+space). `{session_id}` is the leader's Grok session id when you can pass it via `--session`;
 otherwise the script generates a stable handle. Re-running `init` is a safe no-op. Every mutating
 subcommand rewrites `guide.md`, so the manual always matches the current team.
 
-## Create the team and its threads
+## Create the team and its subagents
 
 1. `init` the team, then `add-member` once per member.
-2. Create a durable thread per member with `codex_app.create_thread` - ALWAYS this tool for every
-   member, never a spawned agent - titled `[team name] <member name>`, using THAT member's own
-   name (its role / what it watches), so no two threads share a title. `add-member` prints the
-   exact title to use. If `codex_app.create_thread` accepts a working directory / cwd argument,
-   set it to that member's worktree; otherwise the member's manual tells it to `cd` there first.
-   Use `codex_app.set_thread_title` if the title did not land at creation.
-3. `bind-thread` to record each thread id (and `--cwd`), then send that member's bootstrap
-   trigger (printed by `add-member` / `member-prompt`) as the thread's first message. The trigger
-   is short on purpose: it tells the new thread to READ its `guide.md` and `team.json` rather than
+2. Spawn a backgrounded subagent per member with `spawn_subagent(..., background=true)` - ALWAYS
+   this tool for every member, never a foreground agent - titled `[team name] <member name>`, using
+   THAT member's own name (its role / what it watches), so no two subagents share a title.
+   `add-member` prints the exact title to use. Pass the member's worktree path in the prompt so the
+   subagent `cd`s there first. Record the returned `task_id` as the member's handle; if the spawn
+   tool exposes a title/label argument, set it to the member name.
+3. `bind-thread` to record each subagent's task id (and `--cwd`), then send that member's bootstrap
+   trigger (printed by `add-member` / `member-prompt`) as the subagent's first prompt. The trigger
+   is short on purpose: it tells the new subagent to READ its `guide.md` and `team.json` rather than
    carrying the whole protocol inline.
 
-Every team member is a real Codex thread created with `codex_app.create_thread` - this is strict,
-not a preference. NEVER substitute `multi_agent_v1.spawn_agent`, or any other in-process subagent,
-for a team member: a spawned agent is an ephemeral helper that does not show up as a team thread,
-cannot carry the `[team name] <member name>` title, and cannot be inspected, titled, archived, or
-re-opened with the `codex_app.*` thread tools - which defeats the entire point of a durable team.
-A member only counts once you have `bind-thread`-ed it to a real `codex_app.create_thread` thread
-id. If the thread-creation tool is unavailable, STOP and say so (see Stop rules); do not quietly
-fall back to a spawned agent.
+Every team member is a real Grok subagent created with `spawn_subagent(..., background=true)` - this
+is strict, not a preference. NEVER substitute a foreground `spawn_subagent`, or any other in-process
+helper, for a team member: a foreground agent is an ephemeral helper that does not show up as a team
+member, cannot carry the `[team name] <member name>` title, and cannot be inspected, polled,
+archived, or re-opened with the `get_command_or_subagent_output` / `kill_command_or_subagent` tools -
+which defeats the entire point of a durable team. A member only counts once you have `bind-thread`-ed
+it to a real `spawn_subagent` task id. If the spawn tool is unavailable, STOP and say so (see Stop
+rules); do not quietly fall back to a foreground agent.
 
 ## Communication
 
-Members push to you and to one another with `codex_app.send_message_to_thread`; you inspect their
-state with `codex_app.read_thread`. So members can actually reach you, run `init` with
-`--session <your own thread id>` - that makes `leader.sessionId` in team.json a real, messageable
-thread; without it members cannot report to you and you are stuck polling. The generated manual binds
+Members push to you and to one another by writing to the shared `artifacts/` directory and by
+returning output you collect with `get_command_or_subagent_output(task_ids=[...])`; you inspect their
+state with the same tool. So members can actually reach you, run `init` with
+`--session <your own session id>` - that makes `leader.sessionId` in team.json a real, referenceable
+handle; without it members cannot report to you and you are stuck polling. The generated manual binds
 members to the hard rules, so you mainly keep the channel open: expect frequent small inbound updates
 from each member - findings, `WORKING:`/`BLOCKED:` markers, peer digests - rather than one final
 dump, and act on them as they arrive. All member-to-member and member-to-leader traffic is in English;
@@ -129,7 +138,7 @@ current branch with a merge commit (never a squash or rebase); resolve any confl
 
 ## Run a ulw-plan in parallel
 
-When a decision-complete plan already exists at `.omo/plans/<slug>.md` (from ulw-plan), execute its
+When a decision-complete plan already exists at `.omg/plans/<slug>.md` (from ulw-plan), execute its
 parallel waves as a team instead of one todo at a time. Map it directly:
 - one wave's independent todos -> one member each; the todo's scope/files become that member's `focus`,
   and its acceptance criteria + QA become the member's `deliverable`.
@@ -148,10 +157,10 @@ work is done, or the user no longer wants it, do not leave it lying around - arc
 then delete the team state. A finished team that is never disbanded is a leak.
 
 - `archive` closes the team: notify each active member, copy anything useful into `artifacts/`,
-  archive each member thread with `codex_app.set_thread_archived`, then `archive` flips the team
-  and all members to archived. If a thread-archive tool is unavailable, record that in the team log
+  tear down each member subagent with `kill_command_or_subagent(task_id="...")`, then `archive` flips
+  the team and all members to archived. If a teardown tool is unavailable, record that in the team log
   and tell the user - never pretend a member was archived.
-- `delete` removes `.omo/teams/{session_id}` and refuses while the team is unarchived or any member
+- `delete` removes `.omg/teams/{session_id}` and refuses while the team is unarchived or any member
   is still active unless `--force`.
 - When the work wraps up, land it the way the user asked: `integrate --team <id>` for a direct merge
   commit, or push each member branch and open a PR. Then `worktree-remove` each worktree, archive, and
@@ -162,5 +171,6 @@ then delete the team state. A finished team that is never disbanded is a leak.
 - Stop and ask before deleting an unarchived team while any member is still active.
 - Member communication stays English unless the user explicitly requests otherwise; user-facing
   replies follow the user's language.
-- Stop if the requested operation needs Codex thread tools (create/read/send/title/archive) and
-  they are unavailable; say so instead of faking it.
+- Stop if the requested operation needs Grok subagent tools (`spawn_subagent` with `background: true`,
+  `get_command_or_subagent_output`, `kill_command_or_subagent`) and they are unavailable; say so
+  instead of faking it.

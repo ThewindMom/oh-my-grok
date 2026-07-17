@@ -5,6 +5,7 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/mihazs/oh-my-grok/internal/core/rules"
 	"github.com/mihazs/oh-my-grok/internal/hookenv"
 	"github.com/mihazs/oh-my-grok/internal/hookio"
 	"github.com/mihazs/oh-my-grok/internal/skillgate"
@@ -35,6 +36,16 @@ func sessionStartCmd() *cobra.Command {
 			msg := skillgate.BuildSessionContextMessage(sid, 20)
 			if msg != "" {
 				hookio.EmitAdditionalContext(os.Stdout, msg, "SessionStart")
+			}
+
+			// Inject project rules discovered by the core/rules engine.
+			engine := rules.NewEngine()
+			rulesText, diags := engine.LoadAndFormat(ws, ws)
+			for _, d := range diags {
+				fmt.Fprintf(os.Stderr, "omg-hook: rules %s: %s\n", d.Severity, d.Message)
+			}
+			if rulesText != "" {
+				hookio.EmitAdditionalContext(os.Stdout, rulesText, "SessionStart")
 			}
 			return nil
 		},

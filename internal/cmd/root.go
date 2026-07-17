@@ -31,6 +31,9 @@ func NewRoot() *cobra.Command {
 		postCompactCmd(),
 		postToolCommentCheckCmd(),
 		doctorCmd(),
+		stopContinuationCmd(),
+		resumeContinuationCmd(),
+		startLoopCmd(),
 	)
 	return root
 }

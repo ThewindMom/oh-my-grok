@@ -54,15 +54,15 @@ Run it ONCE at plan generation. A plain re-run on an existing plan is a safe no-
 
 When exploration is exhausted and the unknowns are answered, record the gate in the draft (`status: awaiting-approval`, the pending action `write .omo/plans/<slug>.md`, the approach), present a short brief once, then **wait for the user's explicit okay**. Read their next reply as a decision (approve / scope-change / still-unclear). Full gate mechanics: `references/full-workflow.md`.
 
-## Delegation (Codex-native)
+## Delegation (Grok-native)
 
-Fan out read-only research before deciding. Every spawn names DELIVERABLE / SCOPE / VERIFY inside `message`, states the role inside `message` (and passes `agent_type` as a routing hint - do not assume it alone selected a TOML role), and uses `fork_context: false` unless full parent history is truly required:
+Fan out read-only research before deciding. Every spawn names DELIVERABLE / SCOPE / VERIFY inside the prompt, states the role inside the prompt (and passes `subagent_type` as a routing hint - do not assume it alone selected a role), and starts the child with only the prompt unless full parent history is truly required:
 
 ```
-multi_agent_v1.spawn_agent({"message":"TASK: act as an explorer. DELIVERABLE: ... SCOPE: ... VERIFY: ...","agent_type":"explorer","fork_context":false})
+spawn_subagent(subagent_type="oh-my-grok:explore", background=true, prompt="TASK: act as an explorer. DELIVERABLE: ... SCOPE: ... VERIFY: ...")
 ```
 
-Roles: `explorer` (internal patterns/conventions/tests), `librarian` (external docs/contracts), `metis` (gap analysis), `momus` (high-accuracy plan review). Full spawn/wait/fallback discipline is in `references/full-workflow.md`.
+Roles: `oh-my-grok:explore` (internal patterns/conventions/tests), `oh-my-grok:librarian` (external docs/contracts), `oh-my-grok:metis` (gap analysis), `oh-my-grok:momus` (high-accuracy plan review). Full spawn/wait/fallback discipline is in `references/full-workflow.md`.
 
 ## Stop rules
 

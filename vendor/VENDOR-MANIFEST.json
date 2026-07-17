@@ -39,6 +39,25 @@
       "license": "Apache-2.0",
       "license_file": "vendor/github.com/inconshreveable/mousetrap/LICENSE",
       "pinned_in": "go.mod"
+    },
+    {
+      "name": "lazycodex-hooks",
+      "path": "vendor/lazycodex-hooks/",
+      "upstream": "https://github.com/code-yeongyu/oh-my-openagent",
+      "ref": "omo-codex plugin components",
+      "license": "MIT",
+      "components": [
+        "ultrawork",
+        "ulw-loop",
+        "comment-checker",
+        "rules",
+        "start-work-continuation",
+        "teammode",
+        "git-bash",
+        "lazycodex-executor-verify"
+      ],
+      "contents": "pre-built dist/cli.js + directive.md + hooks.json + supporting skills/agents/scripts",
+      "modifications": "hooks.json paths adapted to ${GROK_PLUGIN_ROOT}; matchers adapted for Grok tool names"
     }
   ],
   "removed": [
