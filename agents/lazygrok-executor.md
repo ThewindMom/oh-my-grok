@@ -1,5 +1,5 @@
 ---
-name: lazycodex-executor
+name: lazygrok-executor
 description: >
   Implementation executor for LazyCodex ultrawork tasks. Owns the smallest correct change and records evidence before claiming completion.
 prompt_mode: full

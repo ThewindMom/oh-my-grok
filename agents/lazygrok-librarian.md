@@ -1,5 +1,5 @@
 ---
-name: lcx-librarian
+name: lazygrok-librarian
 description: >
   External open-source codebase and documentation researcher. Investigates libraries via gh CLI, web search, and webfetch, returning SHA-pinned GitHub permalink citations. Read-only.
 prompt_mode: full

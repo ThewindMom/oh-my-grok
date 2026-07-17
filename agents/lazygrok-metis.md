@@ -1,5 +1,5 @@
 ---
-name: lcx-metis
+name: lazygrok-metis
 description: >
   Pre-planning analyst. Detects contradictions, ambiguity, missing constraints, and execution risks in a draft plan or request before the planner commits. Read-only.
 prompt_mode: full

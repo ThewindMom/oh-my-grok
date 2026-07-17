@@ -1,5 +1,5 @@
 ---
-name: lazycodex-qa-executor
+name: lazygrok-qa-executor
 description: >
   LazyCodex manual QA executor. Runs real scenarios and records artifact-backed surface evidence.
 prompt_mode: full

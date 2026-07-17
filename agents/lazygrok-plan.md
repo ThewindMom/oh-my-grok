@@ -1,5 +1,5 @@
 ---
-name: lcx-plan
+name: lazygrok-plan
 description: >
   Strategic planning consultant. Produces a single executable work plan from a vague or large request. Planner only - never implements. Writes the plan to .omo/plans/<slug>.md.
 prompt_mode: full

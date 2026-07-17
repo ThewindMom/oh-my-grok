@@ -1,5 +1,5 @@
 ---
-name: lazycodex-code-reviewer
+name: lazygrok-code-reviewer
 description: >
   Read-only LazyCodex code-quality reviewer. Audits diffs, tests, and risk with strict artifact-backed findings.
 prompt_mode: full

@@ -1,8 +1,8 @@
 {
-  "name": "oh-my-grok",
-  "version": "0.2.0",
-  "description": "Grok-native productivity plugin — specialist agents, hashline MCP, skill gate, Ralph & Ultrawork loops, todo/boulder continuation, handoff, deterministic hook pipelines (oh-my-openagent inspired).",
-  "skills": ["./skills", "./vendor/superpowers/skills", "./vendor/omo-skills", "./vendor/lazycodex-skills", "./vendor/lazycodex-hooks"],
+  "name": "lazygrok",
+  "version": "0.3.0",
+  "description": "LazyGrok — Grok-native port of lazycodex/oh-my-openagent. Specialist agents, hashline MCP, skill gate, Ralph & Ultrawork loops, todo/boulder continuation, handoff, deterministic hook pipelines, 15 lazycodex hook components, 5 MCP servers, 22 skills.",
+  "skills": ["./skills", "./vendor/superpowers/skills", "./vendor/omo-skills", "./vendor/lazygrok-skills", "./vendor/lazygrok-hooks"],
   "author": {
     "name": "mihazs"
   },
@@ -14,7 +14,8 @@
     "grok-build",
     "grok-plugin",
     "grok-cli",
-    "oh-my-grok",
+    "lazygrok",
+    "lazycodex",
     "ralph-loop",
     "agentic-workflow",
     "ai-coding",

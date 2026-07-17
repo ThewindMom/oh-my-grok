@@ -41,8 +41,8 @@
       "pinned_in": "go.mod"
     },
     {
-      "name": "lazycodex-hooks",
-      "path": "vendor/lazycodex-hooks/",
+      "name": "lazygrok-hooks",
+      "path": "vendor/lazygrok-hooks/",
       "upstream": "https://github.com/code-yeongyu/lazycodex",
       "ref": "plugins/omo components",
       "license": "MIT",

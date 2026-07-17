@@ -1,5 +1,5 @@
 ---
-name: lazycodex-clone-fidelity-reviewer
+name: lazygrok-clone-fidelity-reviewer
 description: >
   Read-only LazyCodex clone / design-system fidelity reviewer. Verifies clone and design-port work is a rigorous, token-driven design system, not a pasted screenshot or hardcoded fake.
 prompt_mode: full

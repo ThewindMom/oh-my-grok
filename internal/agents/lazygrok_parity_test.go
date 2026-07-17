@@ -8,13 +8,13 @@ import (
 	"testing"
 )
 
-// TestLazycodexSkillsVendored verifies that all 22 lazycodex skills are
-// present under vendor/lazycodex-skills/ with SKILL.md files.
-func TestLazycodexSkillsVendored(t *testing.T) {
-	skillsDir := filepath.Join("..", "..", "vendor", "lazycodex-skills")
+// TestLazygrokSkillsVendored verifies that all 22 lazygrok skills are
+// present under vendor/lazygrok-skills/ with SKILL.md files.
+func TestLazygrokSkillsVendored(t *testing.T) {
+	skillsDir := filepath.Join("..", "..", "vendor", "lazygrok-skills")
 	entries, err := os.ReadDir(skillsDir)
 	if err != nil {
-		t.Skipf("lazycodex-skills directory not found: %v", err)
+		t.Skipf("lazygrok-skills directory not found: %v", err)
 	}
 
 	expected := map[string]bool{
@@ -46,14 +46,14 @@ func TestLazycodexSkillsVendored(t *testing.T) {
 	}
 
 	if found < 22 {
-		t.Errorf("expected 22 lazycodex skills with SKILL.md, got %d", found)
+		t.Errorf("expected 22 lazygrok skills with SKILL.md, got %d", found)
 	}
 }
 
-// TestLazycodexHookComponentsPresent verifies that all 15 lazycodex hook
+// TestLazygrokHookComponentsPresent verifies that all 15 lazygrok hook
 // components have pre-built dist/cli.js files.
-func TestLazycodexHookComponentsPresent(t *testing.T) {
-	hooksDir := filepath.Join("..", "..", "vendor", "lazycodex-hooks")
+func TestLazygrokHookComponentsPresent(t *testing.T) {
+	hooksDir := filepath.Join("..", "..", "vendor", "lazygrok-hooks")
 	expected := []string{
 		"bootstrap", "codegraph", "comment-checker", "git-bash",
 		"git-bash-mcp", "lazycodex-executor-verify", "lsp", "lsp-daemon",
@@ -74,9 +74,9 @@ func TestLazycodexHookComponentsPresent(t *testing.T) {
 	}
 }
 
-// TestLazycodexMcpServersRegistered verifies that .mcp.json registers all 7
-// MCP servers (2 Go-native + 5 lazycodex).
-func TestLazycodexMcpServersRegistered(t *testing.T) {
+// TestLazygrokMcpServersRegistered verifies that .mcp.json registers all 7
+// MCP servers (2 Go-native + 5 lazygrok).
+func TestLazygrokMcpServersRegistered(t *testing.T) {
 	mcpPath := filepath.Join("..", "..", ".mcp.json")
 	data, err := os.ReadFile(mcpPath)
 	if err != nil {
@@ -92,8 +92,8 @@ func TestLazycodexMcpServersRegistered(t *testing.T) {
 
 	expected := []string{
 		"hashline", "lsp",
-		"lazycodex-lsp", "lazycodex-lsp-tools", "lazycodex-lsp-daemon",
-		"lazycodex-codegraph", "lazycodex-git-bash",
+		"lazygrok-lsp", "lazygrok-lsp-tools", "lazygrok-lsp-daemon",
+		"lazygrok-codegraph", "lazygrok-git-bash",
 	}
 	for _, name := range expected {
 		if _, ok := mcp.McpServers[name]; !ok {
@@ -105,9 +105,9 @@ func TestLazycodexMcpServersRegistered(t *testing.T) {
 	}
 }
 
-// TestLazycodexHooksWired verifies hooks.json has lazycodex hooks across
+// TestLazygrokHooksWired verifies hooks.json has lazygrok hooks across
 // all 14 lifecycle events.
-func TestLazycodexHooksWired(t *testing.T) {
+func TestLazygrokHooksWired(t *testing.T) {
 	hooksPath := filepath.Join("..", "..", "hooks", "hooks.json")
 	data, err := os.ReadFile(hooksPath)
 	if err != nil {
@@ -141,13 +141,13 @@ func TestLazycodexHooksWired(t *testing.T) {
 		t.Errorf("expected 14 hook events, got %d", len(hooks.Hooks))
 	}
 
-	// Count lazycodex (node) hooks
+	// Count lazygrok (node) hooks
 	nodeCount := 0
 	goCount := 0
 	for _, evEntries := range hooks.Hooks {
 		for _, entry := range evEntries {
 			for _, h := range entry.Hooks {
-				if strings.Contains(h.Command, "node") && strings.Contains(h.Command, "lazycodex") {
+				if strings.Contains(h.Command, "node") && strings.Contains(h.Command, "lazygrok") {
 					nodeCount++
 				}
 				if strings.Contains(h.Command, "run-hook.sh") {
@@ -157,16 +157,16 @@ func TestLazycodexHooksWired(t *testing.T) {
 		}
 	}
 	if nodeCount < 15 {
-		t.Errorf("expected >= 15 lazycodex node hooks, got %d", nodeCount)
+		t.Errorf("expected >= 15 lazygrok node hooks, got %d", nodeCount)
 	}
 	if goCount < 14 {
 		t.Errorf("expected >= 14 Go hooks, got %d", goCount)
 	}
 }
 
-// TestPluginJsonIncludesLazycodexSkills verifies plugin.json references
-// the lazycodex skills and hooks directories.
-func TestPluginJsonIncludesLazycodexSkills(t *testing.T) {
+// TestPluginJsonIncludesLazygrokSkills verifies plugin.json references
+// the lazygrok skills and hooks directories.
+func TestPluginJsonIncludesLazygrokSkills(t *testing.T) {
 	pluginPath := filepath.Join("..", "..", "plugin.json")
 	data, err := os.ReadFile(pluginPath)
 	if err != nil {
@@ -183,17 +183,17 @@ func TestPluginJsonIncludesLazycodexSkills(t *testing.T) {
 	hasLazycodexSkills := false
 	hasLazycodexHooks := false
 	for _, s := range plugin.Skills {
-		if strings.Contains(s, "lazycodex-skills") {
+		if strings.Contains(s, "lazygrok-skills") {
 			hasLazycodexSkills = true
 		}
-		if strings.Contains(s, "lazycodex-hooks") {
+		if strings.Contains(s, "lazygrok-hooks") {
 			hasLazycodexHooks = true
 		}
 	}
 	if !hasLazycodexSkills {
-		t.Error("plugin.json skills array does not include vendor/lazycodex-skills")
+		t.Error("plugin.json skills array does not include vendor/lazygrok-skills")
 	}
 	if !hasLazycodexHooks {
-		t.Error("plugin.json skills array does not include vendor/lazycodex-hooks")
+		t.Error("plugin.json skills array does not include vendor/lazygrok-hooks")
 	}
 }

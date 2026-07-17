@@ -1,5 +1,5 @@
 ---
-name: lazycodex-gate-reviewer
+name: lazygrok-gate-reviewer
 description: >
   Read-only LazyCodex gate reviewer. Re-audits executor, code review, and QA artifacts before final approval.
 prompt_mode: full
