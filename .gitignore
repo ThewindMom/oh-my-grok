@@ -15,7 +15,7 @@ vendor/ast-grep-mcp/*
 !vendor/ast-grep-mcp/dist/
 vendor/lsp-tools-mcp/*
 !vendor/lsp-tools-mcp/dist/
-# Allow lazycodex-hooks node_modules symlink for lsp-daemon resolution
-!vendor/lazycodex-hooks/node_modules/
-!vendor/lazycodex-hooks/node_modules/@code-yeongyu/
-!vendor/lazycodex-hooks/node_modules/@code-yeongyu/lsp-daemon
+# Allow lazygrok-hooks node_modules symlink for lsp-daemon resolution
+!vendor/lazygrok-hooks/node_modules/
+!vendor/lazygrok-hooks/node_modules/@code-yeongyu/
+!vendor/lazygrok-hooks/node_modules/@code-yeongyu/lsp-daemon
