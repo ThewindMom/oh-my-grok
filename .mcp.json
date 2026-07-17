@@ -3,6 +3,10 @@
     "hashline": {
       "command": "bash",
       "args": ["${GROK_PLUGIN_ROOT}/hooks/run-mcp.sh", "hashline"]
+    },
+    "lsp": {
+      "command": "bash",
+      "args": ["${GROK_PLUGIN_ROOT}/hooks/run-mcp.sh", "lsp"]
     }
   }
 }
