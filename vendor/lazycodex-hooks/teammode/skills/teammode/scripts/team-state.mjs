@@ -39,7 +39,7 @@ export function buildTeam({ teamName, sessionName, sessionId = null, dir = null,
 		teamName: teamName.trim(),
 		sessionName: sessionName.trim(),
 		sessionId,
-		threadTitleConvention: `[${teamName.trim()}] <member name>`,
+		threadTitleConvention: `[${teamName.trim()}] ${sessionName.trim()}`,
 		status: "active",
 		createdAt: ts,
 		updatedAt: ts,
@@ -93,26 +93,22 @@ function assertTeamReadyForThreadBinding(team) {
 	assertUniqueMemberFocus(team);
 }
 
-export function addMember(team, { id, focus, lens, deliverable = "", branch = null, name = null }) {
+export function addMember(team, { id, focus, lens, deliverable = "", branch = null }) {
 	if (!id?.trim()) throw new Error("member id is required");
 	if (!focus?.trim()) throw new Error("member focus is required - a concrete part, ownership area, or perspective");
 	if (!LENSES.includes(lens)) throw new Error(`invalid lens "${lens}" - use one of: ${LENSES.join(", ")}`);
 	const memberId = id.trim();
 	const memberFocus = focus.trim();
-	// The member name is the short role label that titles this member's thread. Fall back to the
-	// focus so the title is ALWAYS per-member and never the shared team-wide session name.
-	const memberName = name?.trim() || memberFocus;
 	if (team.members.some((m) => m.id === memberId)) throw new Error(`member id "${memberId}" already exists (duplicate)`);
 	const duplicate = team.members.find((m) => normalizedFocus(m.focus) === normalizedFocus(memberFocus));
 	if (duplicate) throw new Error(`member focus "${memberFocus}" duplicates "${duplicate.focus}" (no two members may own the same thing)`);
 	team.members.push({
 		id: memberId,
-		name: memberName,
 		focus: memberFocus,
 		lens,
 		deliverable: deliverable.trim(),
 		threadId: null,
-		threadTitle: `[${team.teamName}] ${memberName}`,
+		threadTitle: team.threadTitleConvention,
 		cwd: null,
 		worktree: { path: null, branch: branch ?? null },
 		status: "pending",
@@ -135,24 +131,6 @@ export function setMemberStatus(team, { id, status, note = "" }) {
 	if (!MEMBER_STATUSES.includes(status)) throw new Error(`invalid status "${status}" - use one of: ${MEMBER_STATUSES.join(", ")}`);
 	memberById(team, id).status = status;
 	return touch(team, "set-status", `member ${id} -> ${status}${note ? `: ${note}` : ""}`);
-}
-
-// Record a provisioned worktree. Isolation is conflict-triggered: the first worktree-add flips
-// the whole team into worktree mode, so the leader can decide it mid-run, not only at init.
-export function setMemberWorktree(team, { id, path, branch }) {
-	const m = memberById(team, id);
-	team.worktree.enabled = true;
-	m.worktree.path = path;
-	m.worktree.branch = branch;
-	m.cwd = path;
-	return touch(team, "worktree-add", `member ${id} -> ${path} (${branch})`);
-}
-
-export function clearMemberWorktree(team, { id }) {
-	const m = memberById(team, id);
-	if (m.cwd === m.worktree?.path) m.cwd = null;
-	m.worktree.path = null;
-	return touch(team, "worktree-remove", `member ${id}`);
 }
 
 export function archive(team, { id = null, note = "" } = {}) {

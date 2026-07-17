@@ -178,11 +178,10 @@ serialize only when one output strictly feeds the next.
   inactive/uninitialized, or cold-start unavailable, keep moving with
   Read/Grep/Glob/LSP and the ast-grep skill.
 - Repo-wide inspection, CLI smoke tests, git/history, bounded command
-  output → use `omo sparkshell <command>` first. Raw
-  `rg`/`grep`/`cat`/`git` are fallbacks when Sparkshell is unavailable
-  or too narrow. `--shell` is only for shell metacharacters or
-  pipelines; `--tmux-pane` is only for inspecting an existing pane,
-  never for launching ordinary commands. Sparkshell is your default lens.
+  output → prefer `omo sparkshell <command>` before raw shell commands
+  (use `omo sparkshell --shell '<cmd>'` only when shell metacharacters
+  are required; `--tmux-pane <id> --tail-lines N` only to inspect an
+  existing pane). Sparkshell is your default lens on the tree.
 - Symbols — definitions, references, rename impact, diagnostics →
   `lsp_goto_definition`, `lsp_find_references`, `lsp_symbols`,
   `lsp_diagnostics`. Use the LSP, not text search, for anything

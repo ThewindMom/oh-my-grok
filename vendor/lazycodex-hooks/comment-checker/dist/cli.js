@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-// src/codex-hook.ts
+// components/comment-checker/src/codex-hook.ts
 import { readFileSync } from "node:fs";
 import { stdin as processStdin, stdout as processStdout } from "node:process";
 
-// ../../../../utils/src/record-type-guard.ts
+// ../../utils/src/record-type-guard.ts
 function isRecord(value) {
   return typeof value === "object" && value !== null;
 }
 
-// ../../../../comment-checker-core/src/apply-patch-edits.ts
+// ../../comment-checker-core/src/apply-patch-edits.ts
 function extractApplyPatchEdits(details, args) {
   const metadataEdits = getApplyPatchMetadataFiles(details).filter((file) => file.type?.toLowerCase() !== "delete").map((file) => ({
     filePath: file.movePath ?? file.filePath,
@@ -146,7 +146,7 @@ function joinPatchLines(lines) {
 `)}
 `;
 }
-// src/hook-input.ts
+// components/comment-checker/src/hook-input.ts
 function toHookInput(request, context) {
   return {
     session_id: context.sessionId,
@@ -157,7 +157,7 @@ function toHookInput(request, context) {
     tool_input: request.toolInput
   };
 }
-// src/apply-patch.ts
+// components/comment-checker/src/apply-patch.ts
 function extractApplyPatchRequests(event) {
   const metadataRequests = extractApplyPatchMetadataRequests(event.details, event.toolName);
   if (metadataRequests.length > 0)
@@ -201,7 +201,7 @@ function toCommentCheckRequests(edits, sourceToolName) {
   return requests;
 }
 
-// src/request-extractor.ts
+// components/comment-checker/src/request-extractor.ts
 function extractCommentCheckRequests(event) {
   if (event.isError)
     return [];
@@ -299,7 +299,7 @@ function getContentText(content) {
   return content.filter((block) => block.type === "text").map((block) => block.text).join(`
 `);
 }
-// src/runner.ts
+// components/comment-checker/src/runner.ts
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -447,7 +447,7 @@ function spawnProcess(command, args, stdin, maxOutputBytes = MAX_PROCESS_OUTPUT_
   });
 }
 
-// src/codex-hook.ts
+// components/comment-checker/src/codex-hook.ts
 var DEFAULT_MAX_HOOK_FEEDBACK_CHARS = 8000;
 var CONTEXT_PRESSURE_MAX_HOOK_FEEDBACK_CHARS = 1200;
 var CONTEXT_PRESSURE_MARKERS = [
@@ -602,7 +602,7 @@ function readStdin() {
   });
 }
 
-// src/cli.ts
+// components/comment-checker/src/cli.ts
 var [command, subcommand] = process.argv.slice(2);
 if (command === "hook" && subcommand === "post-tool-use") {
   await runCodexHookCli();

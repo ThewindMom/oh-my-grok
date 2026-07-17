@@ -31,7 +31,7 @@ var __toESM = (mod, isNodeMode, target) => {
 };
 var __commonJS = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
 
-// ../../../../../node_modules/.bun/picomatch@4.0.4/node_modules/picomatch/lib/constants.js
+// ../../../node_modules/.bun/picomatch@4.0.4/node_modules/picomatch/lib/constants.js
 var require_constants = __commonJS((exports, module) => {
   var WIN_SLASH = "\\\\/";
   var WIN_NO_SLASH = `[^${WIN_SLASH}]`;
@@ -176,7 +176,7 @@ var require_constants = __commonJS((exports, module) => {
   };
 });
 
-// ../../../../../node_modules/.bun/picomatch@4.0.4/node_modules/picomatch/lib/utils.js
+// ../../../node_modules/.bun/picomatch@4.0.4/node_modules/picomatch/lib/utils.js
 var require_utils = __commonJS((exports) => {
   var {
     REGEX_BACKSLASH,
@@ -239,7 +239,7 @@ var require_utils = __commonJS((exports) => {
   };
 });
 
-// ../../../../../node_modules/.bun/picomatch@4.0.4/node_modules/picomatch/lib/scan.js
+// ../../../node_modules/.bun/picomatch@4.0.4/node_modules/picomatch/lib/scan.js
 var require_scan = __commonJS((exports, module) => {
   var utils = require_utils();
   var {
@@ -554,7 +554,7 @@ var require_scan = __commonJS((exports, module) => {
   module.exports = scan;
 });
 
-// ../../../../../node_modules/.bun/picomatch@4.0.4/node_modules/picomatch/lib/parse.js
+// ../../../node_modules/.bun/picomatch@4.0.4/node_modules/picomatch/lib/parse.js
 var require_parse = __commonJS((exports, module) => {
   var constants = require_constants();
   var utils = require_utils();
@@ -1556,7 +1556,7 @@ var require_parse = __commonJS((exports, module) => {
   module.exports = parse;
 });
 
-// ../../../../../node_modules/.bun/picomatch@4.0.4/node_modules/picomatch/lib/picomatch.js
+// ../../../node_modules/.bun/picomatch@4.0.4/node_modules/picomatch/lib/picomatch.js
 var require_picomatch = __commonJS((exports, module) => {
   var scan = require_scan();
   var parse = require_parse();
@@ -1696,7 +1696,7 @@ var require_picomatch = __commonJS((exports, module) => {
   module.exports = picomatch;
 });
 
-// ../../../../../node_modules/.bun/picomatch@4.0.4/node_modules/picomatch/index.js
+// ../../../node_modules/.bun/picomatch@4.0.4/node_modules/picomatch/index.js
 var require_picomatch2 = __commonJS((exports, module) => {
   var pico = require_picomatch();
   var utils = require_utils();
@@ -1710,10 +1710,10 @@ var require_picomatch2 = __commonJS((exports, module) => {
   module.exports = picomatch;
 });
 
-// src/cli.ts
+// components/rules/src/cli.ts
 import { stdin as processStdin, stdout as processStdout } from "node:process";
 
-// ../../../../rules-engine/src/engine/cache.ts
+// ../../rules-engine/src/engine/cache.ts
 var DYNAMIC_SESSION_KEY = "__pi-rules-session__";
 function createSessionState(cwd) {
   return {
@@ -1765,7 +1765,7 @@ function clearSession(state) {
   state.loadedRules.length = 0;
   state.diagnostics.length = 0;
 }
-// ../../../../rules-engine/src/engine/constants.ts
+// ../../rules-engine/src/engine/constants.ts
 var PROJECT_MARKERS = [
   ".git",
   "pnpm-workspace.yaml",
@@ -1820,10 +1820,10 @@ var SCANNER_EXCLUDED_DIRS = [
   ".next",
   "coverage"
 ];
-// ../../../../rules-engine/src/engine/engine-dynamic-cache.ts
+// ../../rules-engine/src/engine/engine-dynamic-cache.ts
 import { dirname as dirname2, resolve as resolve2 } from "node:path";
 
-// ../../../../rules-engine/src/engine/engine-paths.ts
+// ../../rules-engine/src/engine/engine-paths.ts
 import { realpathSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 var ROOT_SINGLE_FILE_SOURCES = new Set(PROJECT_SINGLE_FILES.filter((source) => !source.includes("/")));
@@ -1898,7 +1898,7 @@ function scopeDirectoryForCandidate(projectRoot, candidate) {
   return scopeRelativeDirectory.length === 0 ? projectRoot : join(projectRoot, scopeRelativeDirectory);
 }
 
-// ../../../../rules-engine/src/engine/ordering.ts
+// ../../rules-engine/src/engine/ordering.ts
 function sortCandidates(candidates) {
   return candidates.map((candidate, index) => ({ candidate, index })).sort((left, right) => compareCandidates(left.candidate, right.candidate) || left.index - right.index).map(({ candidate }) => candidate);
 }
@@ -1919,7 +1919,7 @@ function compareString(a, b) {
   return 0;
 }
 
-// ../../../../rules-engine/src/engine/engine-dynamic-cache.ts
+// ../../rules-engine/src/engine/engine-dynamic-cache.ts
 var MAX_DYNAMIC_MATCH_CACHE_ENTRIES = 4096;
 function matchDynamicRuleCached(cache, projectRoot, targetFile, candidate, loadedRule, matchRuleImpl) {
   const cacheKey = dynamicMatchCacheKey(projectRoot, targetFile, candidate, loadedRule.contentHash);
@@ -1978,7 +1978,7 @@ function candidateDiscoveryCacheKey(options) {
   ].join("\x00");
 }
 
-// ../../../../rules-engine/src/engine/matcher.ts
+// ../../rules-engine/src/engine/matcher.ts
 var import_picomatch = __toESM(require_picomatch2(), 1);
 import { createHash } from "node:crypto";
 var compiledPatternSets = new Map;
@@ -2073,7 +2073,7 @@ function noMatch() {
   return { matched: false, reason: { kind: "no-match" } };
 }
 
-// ../../../../rules-engine/src/engine/parser-frontmatter.ts
+// ../../rules-engine/src/engine/parser-frontmatter.ts
 var FRONTMATTER_OPENING = `---
 `;
 var FRONTMATTER_OPENING_CRLF = `---\r
@@ -2108,7 +2108,7 @@ function findClosingDelimiter(content, openingLength) {
   return null;
 }
 
-// ../../../../rules-engine/src/engine/errors.ts
+// ../../rules-engine/src/engine/errors.ts
 class UnsupportedRuleSourceError extends Error {
   constructor(message) {
     super(message);
@@ -2123,7 +2123,7 @@ class RuleFrontmatterParseError extends Error {
   }
 }
 
-// ../../../../rules-engine/src/engine/parser-yaml.ts
+// ../../rules-engine/src/engine/parser-yaml.ts
 function parseYamlFrontmatter(yamlContent) {
   const lines = yamlContent.replace(/\r\n/g, `
 `).split(`
@@ -2358,7 +2358,7 @@ function stripComment(line) {
   return line;
 }
 
-// ../../../../rules-engine/src/engine/parser.ts
+// ../../rules-engine/src/engine/parser.ts
 function parseRule(content) {
   const normalizedContent = stripBom(content);
   const openingLength = getOpeningDelimiterLength(normalizedContent);
@@ -2387,7 +2387,7 @@ function parseRule(content) {
   }
 }
 
-// ../../../../rules-engine/src/engine/engine-loader.ts
+// ../../rules-engine/src/engine/engine-loader.ts
 function loadCandidate(candidate, deps, diagnostics, projectRoot, loadedRuleContent, projectMembership) {
   if (!isCandidateWithinProjectCached(candidate, projectRoot, projectMembership)) {
     diagnostics.push({
@@ -2446,14 +2446,14 @@ function loadedRuleFromContent(candidate, content, diagnostics) {
   };
 }
 
-// ../../../../rules-engine/src/engine/finder.ts
+// ../../rules-engine/src/engine/finder.ts
 import { homedir } from "node:os";
 import { join as join4, resolve as resolve6 } from "node:path";
 
-// ../../../../rules-engine/src/engine/finder-cache.ts
+// ../../rules-engine/src/engine/finder-cache.ts
 import { existsSync as existsSync2, realpathSync as realpathSync3, statSync as statSync2 } from "node:fs";
 
-// ../../../../rules-engine/src/engine/scanner.ts
+// ../../rules-engine/src/engine/scanner.ts
 import { existsSync, lstatSync, readdirSync, realpathSync as realpathSync2, statSync } from "node:fs";
 import { isAbsolute as isAbsolute2, join as join2, resolve as resolve3 } from "node:path";
 function scanRuleFiles(options) {
@@ -2560,7 +2560,7 @@ function resolveRealPath(filePath) {
   }
 }
 
-// ../../../../rules-engine/src/engine/finder-cache.ts
+// ../../rules-engine/src/engine/finder-cache.ts
 function createRuleDiscoveryCache() {
   return { scannedRuleFiles: new Map, singleFileInfo: new Map };
 }
@@ -2609,7 +2609,7 @@ function resolveRealPath2(filePath) {
   }
 }
 
-// ../../../../rules-engine/src/engine/finder-paths.ts
+// ../../rules-engine/src/engine/finder-paths.ts
 import { dirname as dirname3, posix, relative as relative2, resolve as resolve4 } from "node:path";
 function getWalkDirectories(projectRoot, targetFile) {
   if (targetFile === null) {
@@ -2644,7 +2644,7 @@ function isSameOrChildPath2(childPath, parentPath) {
   return childRelativePath === "" || !childRelativePath.startsWith("..") && !childRelativePath.startsWith("/");
 }
 
-// ../../../../rules-engine/src/engine/finder-sources.ts
+// ../../rules-engine/src/engine/finder-sources.ts
 function toProjectRuleSource(parentDirectory, subDirectory) {
   const source = `${parentDirectory}/${subDirectory}`;
   switch (source) {
@@ -2685,7 +2685,7 @@ function toUserHomeSingleFileSource(ruleFile) {
   }
 }
 
-// ../../../../rules-engine/src/engine/plugin-root.ts
+// ../../rules-engine/src/engine/plugin-root.ts
 import { statSync as statSync3 } from "node:fs";
 import { join as join3, resolve as resolve5 } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -2708,7 +2708,7 @@ function isDirectory(path) {
   }
 }
 
-// ../../../../rules-engine/src/engine/finder.ts
+// ../../rules-engine/src/engine/finder.ts
 var WINDOWS_GIT_BASH_BUNDLED_RULE_PATH = "bundled-rules/windows-git-bash.md";
 function findRuleCandidates(options) {
   const skipUserHome = options.skipUserHome ?? false;
@@ -2848,7 +2848,7 @@ function findUserHomeCandidates(homeDirectory, disabledSources, cache) {
   return candidates;
 }
 
-// ../../../../rules-engine/src/engine/sources.ts
+// ../../rules-engine/src/engine/sources.ts
 var DEFAULT_AUTO_DISABLED_SOURCES = ["AGENTS.md", "~/.claude/rules", "~/.claude/CLAUDE.md"];
 function disabledSourcesFromConfig(config) {
   if (config.enabledSources === "auto") {
@@ -2858,7 +2858,7 @@ function disabledSourcesFromConfig(config) {
   return new Set([...SOURCE_PRIORITY.keys()].filter((source) => !enabledSources.has(source)));
 }
 
-// ../../../../rules-engine/src/engine/engine-dynamic-loader.ts
+// ../../rules-engine/src/engine/engine-dynamic-loader.ts
 function loadDynamicCandidates(config, deps, cwd, targetPaths, dynamicMatchCache) {
   const rules = [];
   const diagnostics = [];
@@ -2911,7 +2911,7 @@ function uniqueStrings(values) {
   }
   return uniqueValues;
 }
-// ../../../../rules-engine/src/engine/engine-static-loader.ts
+// ../../rules-engine/src/engine/engine-static-loader.ts
 function loadStaticCandidates(candidates, deps, projectRoot) {
   const rules = [];
   const diagnostics = [];
@@ -2938,7 +2938,7 @@ function loadStaticCandidates(candidates, deps, projectRoot) {
 function isDedupedRootSingleFile(candidate, rootSingleFileSelected) {
   return rootSingleFileSelected && isRootSingleFile(candidate);
 }
-// ../../../../rules-engine/src/engine/truncator.ts
+// ../../rules-engine/src/engine/truncator.ts
 function truncationNotice(relativePath) {
   return TRUNCATION_NOTICE.replace("{path}", relativePath);
 }
@@ -2998,7 +2998,7 @@ function truncateBudget(input) {
   return results;
 }
 
-// ../../../../rules-engine/src/engine/formatter.ts
+// ../../rules-engine/src/engine/formatter.ts
 function formatRule(rule) {
   const body = normalizeRuleBody(rule.body);
   if (body.length === 0) {
@@ -3116,7 +3116,7 @@ function normalizeRuleBody(body) {
 `).trim();
 }
 
-// ../../../../rules-engine/src/engine/engine.ts
+// ../../rules-engine/src/engine/engine.ts
 function defaultConfig() {
   return {
     disabled: false,
@@ -3196,7 +3196,7 @@ function emptyLoadResult(state) {
   storeLastLoad(state, [], []);
   return { rules: [], diagnostics: [] };
 }
-// ../../../../rules-engine/src/engine/project-root.ts
+// ../../rules-engine/src/engine/project-root.ts
 import { existsSync as existsSync3, statSync as statSync4 } from "node:fs";
 import { dirname as dirname4, join as join5, resolve as resolve7 } from "node:path";
 function findProjectRoot(startPath, markers = PROJECT_MARKERS) {
@@ -3220,7 +3220,7 @@ function findProjectRoot(startPath, markers = PROJECT_MARKERS) {
     currentDirectory = parentDirectory;
   }
 }
-// src/config.ts
+// components/rules/src/config.ts
 function configFromEnvironment(env = process.env) {
   const config = defaultConfig();
   const disableBundledRules = isTruthy(firstEnv(env, "CODEX_RULES_DISABLE_BUNDLED", "PI_RULES_DISABLE_BUNDLED"));
@@ -3307,7 +3307,7 @@ function toRuleSource(value) {
   }
 }
 
-// src/context-pressure.ts
+// components/rules/src/context-pressure.ts
 import { readFileSync } from "node:fs";
 var CONTEXT_PRESSURE_MARKERS = [
   "context compacted",
@@ -3334,7 +3334,7 @@ function transcriptHasContextPressureMarker(transcriptPath) {
   }
 }
 
-// src/debug-log.ts
+// components/rules/src/debug-log.ts
 import { performance } from "node:perf_hooks";
 import { debuglog } from "node:util";
 var debug = debuglog("codex-rules");
@@ -3372,11 +3372,11 @@ function formatFields(fields) {
   return ` ${entries.map(([key, value]) => `${key}=${String(value)}`).join(" ")}`;
 }
 
-// src/dynamic-target-fingerprints.ts
+// components/rules/src/dynamic-target-fingerprints.ts
 import { statSync as statSync5 } from "node:fs";
 import { resolve as resolve9 } from "node:path";
 
-// src/path-utils.ts
+// components/rules/src/path-utils.ts
 import { isAbsolute as isAbsolute3, relative as relative3, resolve as resolve8 } from "node:path";
 function displayPath(cwd, filePath) {
   const rel = isAbsolute3(filePath) ? relative3(cwd, filePath) : filePath;
@@ -3402,7 +3402,7 @@ function uniqueStrings2(values) {
   return uniqueValues;
 }
 
-// src/dynamic-target-fingerprints.ts
+// components/rules/src/dynamic-target-fingerprints.ts
 function fingerprintDynamicTargets(cwd, targetPaths, config) {
   const disabledSources = disabledSourcesFromConfig(config);
   const discoveryCache = createRuleDiscoveryCache();
@@ -3458,7 +3458,7 @@ function dynamicTargetCacheKey(targetPath) {
   return toPosixPath2(resolve9(targetPath));
 }
 
-// src/event-budget.ts
+// components/rules/src/event-budget.ts
 function withDynamicBudget(config) {
   return {
     ...config,
@@ -3474,7 +3474,7 @@ function withPromptBudget(config) {
   };
 }
 
-// src/hook-output.ts
+// components/rules/src/hook-output.ts
 var MAX_ADDITIONAL_CONTEXT_CHARS = 32000;
 function formatAdditionalContextOutput(eventName, additionalContext) {
   const normalizedContext = limitAdditionalContext(normalizeAdditionalContext(additionalContext));
@@ -3505,12 +3505,12 @@ function limitAdditionalContext(additionalContext) {
   return `${head}${marker}`;
 }
 
-// src/persistent-cache.ts
+// components/rules/src/persistent-cache.ts
 import { mkdirSync as mkdirSync2, readFileSync as readFileSync2, rmSync as rmSync2, writeFileSync } from "node:fs";
 import { homedir as homedir2 } from "node:os";
 import { dirname as dirname6, join as join6 } from "node:path";
 
-// src/post-compact-state.ts
+// components/rules/src/post-compact-state.ts
 function postCompactKindState(kinds) {
   if (kinds.size === 0) {
     return;
@@ -3541,7 +3541,7 @@ function postCompactRecoveringKinds(state) {
   return recoveringKinds;
 }
 
-// src/session-state-lock.ts
+// components/rules/src/session-state-lock.ts
 import { mkdirSync, rmSync } from "node:fs";
 import { dirname as dirname5 } from "node:path";
 var SESSION_STATE_LOCK_CONTENDED = Symbol("session-state-lock-contended");
@@ -3582,7 +3582,7 @@ function sleepSync(milliseconds) {
   Atomics.wait(LOCK_SLEEP_VIEW, 0, 0, milliseconds);
 }
 
-// src/persistent-cache.ts
+// components/rules/src/persistent-cache.ts
 function hydrateEngineState(engine, cachePath) {
   const state = readSessionState(cachePath);
   engine.state.staticDedup.clear();
@@ -3732,7 +3732,7 @@ function isRecord2(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-// src/transcript-search.ts
+// components/rules/src/transcript-search.ts
 import { readFileSync as readFileSync3 } from "node:fs";
 function readTranscriptSearchText(transcriptPath, options = {}) {
   try {
@@ -3826,7 +3826,7 @@ function isRecord3(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-// src/post-compact-budget.ts
+// components/rules/src/post-compact-budget.ts
 var DEFAULT_EFFECTIVE_CONTEXT_WINDOW_PERCENT = 95;
 var ESTIMATED_TRANSCRIPT_CHARS_PER_TOKEN = 3;
 var PROJECTED_INJECTION_CHARS_PER_TOKEN = 2;
@@ -3897,7 +3897,7 @@ function estimateTranscript(transcriptPath) {
   };
 }
 
-// src/post-compact-claim.ts
+// components/rules/src/post-compact-claim.ts
 function claimedPostCompactKind(result, kind) {
   return result === "claimed" ? kind : undefined;
 }
@@ -3905,7 +3905,7 @@ function shouldSkipPostCompactClaim(result, recoveryInProgress) {
   return result === "contended" || result === "not-pending" && recoveryInProgress;
 }
 
-// src/rules-engine-factory.ts
+// components/rules/src/rules-engine-factory.ts
 import { readFileSync as readFileSync4 } from "node:fs";
 import { dirname as dirname7 } from "node:path";
 import { fileURLToPath as fileURLToPath2 } from "node:url";
@@ -3926,10 +3926,10 @@ function createRulesEngine(options, config = configFromEnvironment(options.env))
   });
 }
 
-// src/static-injection.ts
+// components/rules/src/static-injection.ts
 import { existsSync as existsSync5 } from "node:fs";
 
-// src/post-compact-directive.ts
+// components/rules/src/post-compact-directive.ts
 var DIRECTIVE_HEADER = [
   "## MANDATORY: POST-COMPACTION RULE RECOVERY",
   "",
@@ -3965,7 +3965,7 @@ function buildPostCompactReadDirective(rulePaths, maxChars) {
 `)}${DIRECTIVE_FOOTER}`;
 }
 
-// src/sparkshell-awareness.ts
+// components/rules/src/sparkshell-awareness.ts
 import { existsSync as existsSync4 } from "node:fs";
 import { join as join7 } from "node:path";
 var SPARKSHELL_AWARENESS_MARKER = "## Sparkshell Runtime";
@@ -4032,9 +4032,9 @@ function getSparkShellRuntimeAwareness(env = process.env, deps = {}) {
   return [
     SPARKSHELL_AWARENESS_MARKER,
     "",
-    `- Use \`${command} sparkshell <command>\` first for repo inspection, CLI smoke tests, git/history checks, and bounded command output. Raw \`rg\`/\`grep\`/\`cat\`/\`git\` are fallbacks when Sparkshell is unavailable or too narrow for the task.`,
-    `- Use \`${command} sparkshell --shell '<command>'\` only for shell metacharacters or pipelines.`,
-    `- Use \`${command} sparkshell --tmux-pane <pane-id> --tail-lines 400\` only to inspect an existing pane, never to launch ordinary commands. Tail lines must stay between 100 and 1000.`,
+    `- Prefer \`${command} sparkshell <command>\` for repo inspection, CLI smoke tests, git/history checks, and bounded verification before falling back to raw shell commands.`,
+    `- Use \`${command} sparkshell --shell '<command>'\` only when shell metacharacters are required.`,
+    `- Use \`${command} sparkshell --tmux-pane <pane-id> --tail-lines 400\` to inspect an existing tmux pane. Tail lines must stay between 100 and 1000.`,
     "- When no native sidecar or appserver is available, Sparkshell silently falls back to raw command execution. `OMO_SPARKSHELL_BIN` selects a native sidecar path.",
     "- When `CODEX_THREAD_ID` identifies a Codex session, Sparkshell feeds recent session context (first/latest user request + last 5 conversation messages) into oversized-output condensation for relevance ranking, but never appends that context to command output. `OMO_SPARKSHELL_SESSION_CONTEXT=0` disables the lookup.",
     `- Route potentially huge output (full log files, big diffs, \`cat\`/\`grep\` over large artifacts) through \`${command} sparkshell\` instead of reading it raw: oversized output is condensed to a budget while preserving error signatures, repeated patterns, session-goal-relevant lines, and head/tail. Tune with \`--budget <chars>\`; disable with \`OMO_SPARKSHELL_CONDENSE=0\`.`,
@@ -4055,7 +4055,7 @@ function isFalsy(value) {
   return ["0", "false", "no", "off"].includes(value.trim().toLowerCase());
 }
 
-// src/transcript-rule-filter.ts
+// components/rules/src/transcript-rule-filter.ts
 function filterRulesAlreadyInTranscript(rules, transcriptPath, markInjected, options = {}) {
   if (rules.length === 0 || transcriptPath === null) {
     return [...rules];
@@ -4102,7 +4102,7 @@ function displayFilename2(rule) {
   return segments.at(-1) ?? normalizedPath;
 }
 
-// src/static-injection.ts
+// components/rules/src/static-injection.ts
 function runStaticInjection(cwd, transcriptPath, eventName, cachePath, options, completedPostCompactChannel, transcriptSearchOptions = {}, model) {
   const config = configFromEnvironment(options.env);
   if (config.disabled || config.mode === "off" || config.mode === "dynamic") {
@@ -4217,7 +4217,7 @@ function combineStaticContext(...blocks) {
 `);
 }
 
-// src/tool-paths.ts
+// components/rules/src/tool-paths.ts
 import { existsSync as existsSync6, statSync as statSync6 } from "node:fs";
 import { isAbsolute as isAbsolute4, resolve as resolve10 } from "node:path";
 var COMMAND_TOOL_NAMES = new Set(["bash", "shell_command", "exec_command"]);
@@ -4387,7 +4387,7 @@ function isFailedToolResponse(value) {
   return value["isError"] === true || value["is_error"] === true || value["error"] === true || value["status"] === "error";
 }
 
-// src/codex-hook.ts
+// components/rules/src/codex-hook.ts
 async function runSessionStartHook(input, options = {}) {
   const cachePath = sessionCachePath(input.session_id, options.pluginDataRoot);
   if (input.source === "clear") {
@@ -4498,7 +4498,7 @@ async function runPostToolUseHook(input, options = {}) {
   return output;
 }
 
-// src/cli.ts
+// components/rules/src/cli.ts
 var command = process.argv[2];
 var subcommand = process.argv[3];
 if (command === "hook" && subcommand === "session-start") {

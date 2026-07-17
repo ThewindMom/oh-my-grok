@@ -43,21 +43,28 @@
     {
       "name": "lazycodex-hooks",
       "path": "vendor/lazycodex-hooks/",
-      "upstream": "https://github.com/code-yeongyu/oh-my-openagent",
-      "ref": "omo-codex plugin components",
+      "upstream": "https://github.com/code-yeongyu/lazycodex",
+      "ref": "plugins/omo components",
       "license": "MIT",
       "components": [
-        "ultrawork",
-        "ulw-loop",
+        "bootstrap",
+        "codegraph",
         "comment-checker",
+        "git-bash",
+        "git-bash-mcp",
+        "lazycodex-executor-verify",
+        "lsp",
+        "lsp-daemon",
+        "lsp-tools-mcp",
         "rules",
         "start-work-continuation",
         "teammode",
-        "git-bash",
-        "lazycodex-executor-verify"
+        "telemetry",
+        "ultrawork",
+        "ulw-loop"
       ],
-      "contents": "pre-built dist/cli.js + directive.md + hooks.json + supporting skills/agents/scripts",
-      "modifications": "hooks.json paths adapted to ${GROK_PLUGIN_ROOT}; matchers adapted for Grok tool names"
+      "contents": "pre-built dist/cli.js + directive.md + hooks.json + supporting skills/agents/scripts + auto-update scripts",
+      "modifications": "hooks.json paths adapted to ${GROK_PLUGIN_ROOT}; matchers adapted for Grok tool names; start-work-continuation and ulw-loop dist/cli.js sourced from oh-my-openagent builds (lazycodex repo gitignores dist/ for those two)"
     }
   ],
   "removed": [

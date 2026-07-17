@@ -19,6 +19,47 @@
             "statusMessage": "(OmO) Loading Project Rules"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/bootstrap/dist/cli.js\" hook session-start",
+            "timeout": 30,
+            "statusMessage": "(OmO) Checking Bootstrap Provisioning"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/telemetry/dist/cli.js\" hook session-start",
+            "timeout": 5,
+            "statusMessage": "(OmO) Recording Session Telemetry"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/codegraph/dist/cli.js\" hook session-start",
+            "timeout": 5,
+            "statusMessage": "(OmO) Checking CodeGraph Bootstrap"
+          }
+        ]
+      },
+      {
+        "matcher": "^startup$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/scripts/auto-update.mjs\" hook session-start",
+            "timeout": 5,
+            "statusMessage": "(OmO) Checking Auto Update"
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
@@ -91,7 +132,7 @@
             "type": "command",
             "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/ulw-loop/dist/cli.js\" hook pre-tool-use",
             "timeout": 5,
-            "statusMessage": "(OmO) Enforcing Unlimited Ulw-Loop Budget"
+            "statusMessage": "(OmO) Enforcing Unlimited Goal Budget"
           }
         ]
       }
@@ -149,6 +190,17 @@
         ]
       },
       {
+        "matcher": "Write|StrReplace|search_replace|write|apply_patch|edit|multi_edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/lsp/dist/cli.js\" hook post-tool-use",
+            "timeout": 60,
+            "statusMessage": "(OmO) Checking LSP Diagnostics"
+          }
+        ]
+      },
+      {
         "matcher": "Write|StrReplace|search_replace|write|apply_patch",
         "hooks": [
           {
@@ -167,6 +219,17 @@
             "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/teammode/dist/cli.js\" hook post-tool-use",
             "timeout": 10,
             "statusMessage": "(OmO) Checking Thread Title Hygiene"
+          }
+        ]
+      },
+      {
+        "matcher": "codegraph[._].*|mcp__codegraph__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/codegraph/dist/cli.js\" hook post-tool-use",
+            "timeout": 5,
+            "statusMessage": "(OmO) Checking CodeGraph Init Guidance"
           }
         ]
       }
@@ -308,6 +371,17 @@
             "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/rules/dist/cli.js\" hook post-compact",
             "timeout": 10,
             "statusMessage": "(OmO) Resetting Project Rule Cache"
+          }
+        ]
+      },
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/lsp/dist/cli.js\" hook post-compact",
+            "timeout": 5,
+            "statusMessage": "(OmO) Resetting LSP Diagnostics Cache"
           }
         ]
       },
