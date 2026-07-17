@@ -14,7 +14,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/rules/dist/cli.js\" hook session-start",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" rules session-start",
             "timeout": 10,
             "statusMessage": "(OmO) Loading Project Rules"
           }
@@ -24,7 +24,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/bootstrap/dist/cli.js\" hook session-start",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" bootstrap session-start",
             "timeout": 30,
             "statusMessage": "(OmO) Checking Bootstrap Provisioning"
           }
@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/telemetry/dist/cli.js\" hook session-start",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" telemetry session-start",
             "timeout": 5,
             "statusMessage": "(OmO) Recording Session Telemetry"
           }
@@ -44,7 +44,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/codegraph/dist/cli.js\" hook session-start",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" codegraph session-start",
             "timeout": 5,
             "statusMessage": "(OmO) Checking CodeGraph Bootstrap"
           }
@@ -76,7 +76,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/ultrawork/dist/cli.js\" hook user-prompt-submit",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" ultrawork user-prompt-submit",
             "timeout": 5,
             "statusMessage": "(OmO) Checking Ultrawork Trigger"
           }
@@ -86,7 +86,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/ulw-loop/dist/cli.js\" hook user-prompt-submit",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" ulw-loop user-prompt-submit",
             "timeout": 10,
             "statusMessage": "(OmO) Checking Ulw-Loop Steering"
           }
@@ -96,7 +96,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/rules/dist/cli.js\" hook user-prompt-submit",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" rules user-prompt-submit",
             "timeout": 10,
             "statusMessage": "(OmO) Loading Project Rules"
           }
@@ -119,7 +119,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/git-bash/dist/cli.js\" hook pre-tool-use",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" git-bash pre-tool-use",
             "timeout": 5,
             "statusMessage": "(OmO) Recommending Git Bash MCP"
           }
@@ -130,7 +130,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/ulw-loop/dist/cli.js\" hook pre-tool-use",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" ulw-loop pre-tool-use",
             "timeout": 5,
             "statusMessage": "(OmO) Enforcing Unlimited Goal Budget"
           }
@@ -183,7 +183,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/comment-checker/dist/cli.js\" hook post-tool-use",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" comment-checker post-tool-use",
             "timeout": 30,
             "statusMessage": "(OmO) Checking Comments"
           }
@@ -194,7 +194,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/lsp/dist/cli.js\" hook post-tool-use",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" lsp post-tool-use",
             "timeout": 60,
             "statusMessage": "(OmO) Checking LSP Diagnostics"
           }
@@ -205,7 +205,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/rules/dist/cli.js\" hook post-tool-use",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" rules post-tool-use",
             "timeout": 10,
             "statusMessage": "(OmO) Matching Project Rules"
           }
@@ -216,7 +216,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/teammode/dist/cli.js\" hook post-tool-use",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" teammode post-tool-use",
             "timeout": 10,
             "statusMessage": "(OmO) Checking Thread Title Hygiene"
           }
@@ -227,7 +227,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/codegraph/dist/cli.js\" hook post-tool-use",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" codegraph post-tool-use",
             "timeout": 5,
             "statusMessage": "(OmO) Checking CodeGraph Init Guidance"
           }
@@ -270,7 +270,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/start-work-continuation/dist/cli.js\" hook stop",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" start-work-continuation stop",
             "timeout": 10,
             "statusMessage": "(OmO) Checking Start-Work Continuation"
           }
@@ -324,7 +324,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/start-work-continuation/dist/cli.js\" hook subagent-stop",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" start-work-continuation subagent-stop",
             "timeout": 10,
             "statusMessage": "(OmO) Checking Start-Work Continuation"
           }
@@ -335,7 +335,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/lazygrok-executor-verify/dist/cli.js\" hook subagent-stop",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" lazygrok-executor-verify subagent-stop",
             "timeout": 10,
             "statusMessage": "(OmO) Verifying LazyCodex Executor Evidence"
           }
@@ -368,7 +368,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/rules/dist/cli.js\" hook post-compact",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" rules post-compact",
             "timeout": 10,
             "statusMessage": "(OmO) Resetting Project Rule Cache"
           }
@@ -379,7 +379,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/lsp/dist/cli.js\" hook post-compact",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" lsp post-compact",
             "timeout": 5,
             "statusMessage": "(OmO) Resetting LSP Diagnostics Cache"
           }
@@ -389,7 +389,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${GROK_PLUGIN_ROOT}/vendor/lazygrok-hooks/git-bash/dist/cli.js\" hook post-compact",
+            "command": "node \"${GROK_PLUGIN_ROOT}/hooks/lazygrok-shim.mjs\" git-bash post-compact",
             "timeout": 5,
             "statusMessage": "(OmO) Resetting Git Bash MCP Reminder"
           }
