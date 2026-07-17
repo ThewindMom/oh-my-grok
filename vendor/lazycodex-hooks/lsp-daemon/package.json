@@ -1,0 +1,9 @@
+{
+  "name": "@code-yeongyu/lsp-daemon",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/cli.js",
+  "bin": {
+    "omo-lsp-daemon": "dist/cli.js"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "lazycodex-hooks-vendored",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@code-yeongyu/lsp-daemon": "file:./lsp-daemon"
+  }
+}

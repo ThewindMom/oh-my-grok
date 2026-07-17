@@ -7,6 +7,26 @@
     "lsp": {
       "command": "bash",
       "args": ["${GROK_PLUGIN_ROOT}/hooks/run-mcp.sh", "lsp"]
+    },
+    "lazycodex-lsp": {
+      "command": "node",
+      "args": ["${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/lsp/dist/cli.js", "mcp"]
+    },
+    "lazycodex-lsp-tools": {
+      "command": "node",
+      "args": ["${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/lsp-tools-mcp/dist/cli.js", "mcp"]
+    },
+    "lazycodex-lsp-daemon": {
+      "command": "node",
+      "args": ["${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/lsp-daemon/dist/cli.js", "mcp"]
+    },
+    "lazycodex-codegraph": {
+      "command": "node",
+      "args": ["${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/codegraph/dist/cli.js", "mcp"]
+    },
+    "lazycodex-git-bash": {
+      "command": "node",
+      "args": ["${GROK_PLUGIN_ROOT}/vendor/lazycodex-hooks/git-bash-mcp/dist/cli.js", "mcp"]
     }
   }
 }

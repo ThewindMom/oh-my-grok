@@ -2,7 +2,7 @@
   "name": "oh-my-grok",
   "version": "0.2.0",
   "description": "Grok-native productivity plugin — specialist agents, hashline MCP, skill gate, Ralph & Ultrawork loops, todo/boulder continuation, handoff, deterministic hook pipelines (oh-my-openagent inspired).",
-  "skills": ["./skills", "./vendor/superpowers/skills", "./vendor/omo-skills"],
+  "skills": ["./skills", "./vendor/superpowers/skills", "./vendor/omo-skills", "./vendor/lazycodex-skills", "./vendor/lazycodex-hooks"],
   "author": {
     "name": "mihazs"
   },
